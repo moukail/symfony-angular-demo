@@ -28,6 +28,7 @@ podman run --rm -w /app -v ./frontend:/app docker.io/library/node:25.9-alpine3.2
 Podman
 ======
 ```bash
+systemctl --user restart podman.socket
 DOCKER_HOST=unix:///run/user/1000/podman/podman.sock
 podman compose up -d --build
 #### Add material

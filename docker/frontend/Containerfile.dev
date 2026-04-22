@@ -2,10 +2,8 @@ FROM docker.io/library/node:25.9-alpine3.23
 
 WORKDIR /var/www
 
-COPY package*.json ./
-RUN npm install -g @angular/cli && npm install
-
-#COPY . .
+COPY frontend/package*.json ./
+RUN npm install -g @angular/cli && npm install --legacy-peer-deps
 
 EXPOSE 3000
 VOLUME /var/www/node_modules
