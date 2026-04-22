@@ -1,0 +1,31 @@
+services:
+  database:
+    image: docker.io/library/mysql:9.6-oraclelinux9
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: symfony_angular_demo
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend/Containerfile.dev
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./backend:/var/www:z
+    environment:
+      DATABASE_URL: "mysql://root:root@database:3306/symfony_angular_demo"
+    env_file:
+      - ./.env
+    depends_on:
+      - database
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend/Containerfile.dev
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./frontend:/var/www:z
+      - /var/www/node_modules
+    depends_on:
+      - backend

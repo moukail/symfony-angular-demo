@@ -1,0 +1,21 @@
+FROM docker.io/library/php:8.5-fpm-alpine3.23   
+
+RUN docker-php-ext-install -j$(nproc) pdo_mysql
+
+RUN apk add --no-cache bash curl wget && \
+    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer && \
+    wget https://get.symfony.com/cli/installer -O - | bash && \
+    mv /root/.symfony5/bin/symfony /usr/bin/symfony
+
+WORKDIR /var/www
+
+COPY backend/composer.json backend/composer.lock* ./
+RUN composer install --optimize-autoloader --no-interaction --no-scripts
+
+COPY docker/backend/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+EXPOSE 8000
+
+ENTRYPOINT ["entrypoint.sh"]
+CMD ["symfony", "local:server:start", "--allow-all-ip"]
