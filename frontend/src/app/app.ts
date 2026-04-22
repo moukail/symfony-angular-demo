@@ -1,5 +1,9 @@
 import { Component, signal, inject } from '@angular/core';
 import { RouterOutlet, RouterLink } from '@angular/router';
+<<<<<<< HEAD
+=======
+
+>>>>>>> 43be0b9 (fix: app.ts)
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -16,6 +20,7 @@ import { logout } from './actions/auth.actions';
 
 @Component({
   selector: 'app-root',
+<<<<<<< HEAD
   standalone: true,
   imports: [
     RouterOutlet,
@@ -27,6 +32,9 @@ import { logout } from './actions/auth.actions';
     MatIconModule,
     AsyncPipe
   ],
+=======
+  imports: [RouterOutlet, RouterLink, MatToolbarModule, MatSidenavModule, MatListModule, MatButtonModule, MatIconModule],
+>>>>>>> 43be0b9 (fix: app.ts)
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
