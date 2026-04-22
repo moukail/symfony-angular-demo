@@ -1,0 +1,21 @@
+<div class="layout-container">
+  
+  <mat-toolbar color="primary" class="navbar">
+    <span>My Application</span>
+    <span class="spacer"></span>
+    <button routerLink="/home" mat-button>Home</button>
+    <button routerLink="/login" mat-button>Login</button>
+    <button routerLink="/dashboard" mat-button>Dashboard</button>
+  </mat-toolbar>
+
+  <main class="main-content">
+    <div class="content-padding">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+
+  <mat-toolbar color="accent" class="footer">
+    <span class="footer-text">&copy; 2026 My Company. All rights reserved.</span>
+  </mat-toolbar>
+
+</div>

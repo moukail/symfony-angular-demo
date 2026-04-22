@@ -1,0 +1,39 @@
+.layout-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.navbar {
+  position: sticky;
+  top: 0;
+  flex-shrink: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.main-content {
+  flex: 1 1 auto;
+}
+
+.content-padding {
+  padding: 24px;
+}
+
+.footer {
+  flex-shrink: 0;
+  z-index: 999;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+
+/* Utility class to push items to the right side of the toolbar */
+.spacer {
+  flex: 1 1 auto;
+}
+
+.footer-text {
+  font-size: 14px;
+  width: 100%;
+  text-align: center;
+}

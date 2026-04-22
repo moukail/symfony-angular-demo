@@ -1,0 +1,101 @@
+<div class="playlist-wrapper">
+
+  <mat-card class="playlist-card" elevation="4">
+    
+    <mat-card-header>
+      <mat-card-title>Add your playlist</mat-card-title>
+    </mat-card-header>
+
+      <mat-card-content *ngIf="!isSuccessfull()">
+        <form [formGroup]="playlistForm" (ngSubmit)="onSubmit()" class="playlist-form">
+            <mat-form-field appearance="outline" color="primary">
+                <mat-label>MAC Address</mat-label>
+                <input matInput formControlName="macAddress" type="text" placeholder="Ex. 00:1A:2B:3C:4D:5E">
+                <mat-icon matPrefix>computer</mat-icon>
+                
+                <mat-error *ngIf="playlistForm.get('macAddress')?.hasError('required')">
+                    MAC Address is required
+                </mat-error>
+                <mat-error *ngIf="playlistForm.get('macAddress')?.hasError('pattern')">
+                    Please enter a valid MAC Address
+                </mat-error>
+            </mat-form-field>
+
+            <div class="form-section">
+                <label class="section-label">Playlist Type</label>
+                <mat-radio-group aria-label="Select an option" formControlName="type" required class="type-radio-group">
+                    <mat-radio-button value="m3u">M3U playlist</mat-radio-button>
+                    <mat-radio-button value="xtream">Xtream code</mat-radio-button>
+                </mat-radio-group>
+                <mat-error *ngIf="playlistForm.get('type')?.hasError('required') && playlistForm.get('type')?.touched">
+                    Type is required
+                </mat-error>
+            </div>
+
+            <mat-form-field appearance="outline" color="primary">
+                <mat-label>Playlist name</mat-label>
+                <input matInput formControlName="name" type="text" placeholder="">
+                <mat-icon matPrefix>title</mat-icon>
+                
+                <mat-error *ngIf="playlistForm.get('name')?.hasError('required')">
+                    Playlist name is required
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" color="primary">
+                <mat-label>Playlist URL</mat-label>
+                <input matInput formControlName="url" type="text" placeholder="">
+                <mat-icon matPrefix>link</mat-icon>
+                
+                <mat-error *ngIf="playlistForm.get('url')?.hasError('required')">
+                    Playlist URL is required
+                </mat-error>
+            </mat-form-field>
+
+            <div *ngIf="playlistForm.get('type')?.value === 'xtream'" class="xtream-fields">
+                <mat-form-field appearance="outline" color="primary">
+                    <mat-label>Username</mat-label>
+                    <input matInput formControlName="username" type="text" placeholder="Username">
+                    <mat-icon matPrefix>person</mat-icon>
+                    
+                    <mat-error *ngIf="playlistForm.get('username')?.hasError('required')">
+                        Username is required
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" color="primary">
+                    <mat-label>Password</mat-label>
+                    <input matInput formControlName="password" type="password" placeholder="Password">
+                    <mat-icon matPrefix>lock</mat-icon>
+                    
+                    <mat-error *ngIf="playlistForm.get('password')?.hasError('required')">
+                        Password is required
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="form-actions">
+                <button mat-raised-button color="primary" type="submit" [disabled]="!playlistForm.valid">
+                    <mat-icon *ngIf="!isLoading()">loading</mat-icon>
+                    <mat-icon *ngIf="isLoading()">add</mat-icon>
+                    Add Playlist
+                </button>
+            </div>
+
+        </form>
+    </mat-card-content>
+
+    @if (isSuccessfull()) {
+        <mat-card-content>
+            <div class="form-section">
+                <span class="success-message"><mat-icon color="primary">check_circle</mat-icon> Playlist added successfully</span>
+            </div>
+            <div class="form-actions">
+                <button mat-raised-button color="primary" (click)="resetForm()">Add another playlist</button>
+            </div>
+        </mat-card-content>
+    }
+
+  </mat-card>
+
+</div>

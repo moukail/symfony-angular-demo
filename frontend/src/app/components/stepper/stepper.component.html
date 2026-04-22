@@ -1,0 +1,91 @@
+<div class="playlist-wrapper">
+
+  <mat-card class="playlist-card" elevation="4">
+    
+    <mat-card-header>
+      <mat-card-title>Add your playlist</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="macAddressFormGroup">
+        <mat-stepper orientation="vertical" #stepper>
+          <mat-step [stepControl]="macAddressFormGroup">
+            <div [formGroup]="macAddressFormGroup">
+              <ng-template matStepLabel>Fill out your MAC Address</ng-template>
+              <mat-form-field>
+                  <mat-label>MAC Address</mat-label>
+                  <input matInput placeholder="MAC Address" formControlName="macAddress" required>
+              </mat-form-field>
+              <div>
+                  <button matButton matStepperNext>Next</button>
+              </div>
+            </div>
+          </mat-step>
+          <mat-step [stepControl]="typeFormGroup">
+            <div [formGroup]="typeFormGroup">
+              <ng-template matStepLabel>Fill out your type</ng-template>
+              <mat-radio-group aria-label="Select an option" formControlName="type" required class="type-radio-group">
+                <mat-radio-button value="m3u">M3U playlist</mat-radio-button>
+                <mat-radio-button value="xtream">Xtream code</mat-radio-button>
+              </mat-radio-group>
+              <div>
+                <button matButton matStepperPrevious>Back</button>
+                <button matButton matStepperNext>Next</button>
+              </div>
+            </div>
+          </mat-step>
+          <mat-step [stepControl]="playlistFormGroup">
+            <div [formGroup]="playlistFormGroup">
+              <ng-template matStepLabel>Fill out your address</ng-template>
+
+              <div *ngIf="typeFormGroup.value.type === 'm3u'">
+                <mat-form-field>
+                    <mat-label>M3U playlist</mat-label>
+                    <input matInput formControlName="m3uPlaylist" placeholder="Ex. http://example.com/playlist.m3u"
+                        required>
+                </mat-form-field>
+              </div>
+
+              <div *ngIf="typeFormGroup.value.type === 'xtream'">
+                <mat-form-field>
+                    <mat-label>Xtream code url</mat-label>
+                    <input matInput formControlName="xtreamCodeUrl" placeholder=""
+                        required>
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-label>Xtream code username</mat-label>
+                    <input matInput formControlName="xtreamCodeUsername" placeholder=""
+                        required>
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-label>Xtream code password</mat-label>
+                    <input matInput formControlName="xtreamCodePassword" placeholder=""
+                        required>
+                </mat-form-field>
+              </div>
+
+              <div>
+                  <button matButton matStepperPrevious>Back</button>
+                  <button matButton matStepperNext>Next</button>
+              </div>
+            </div>
+          </mat-step>
+          <mat-step>
+            <ng-template matStepLabel>Done</ng-template>
+            <p>You are now done.</p>
+            <div>
+              <button matButton matStepperPrevious>Back</button>
+              <button matButton (click)="stepper.reset()">Reset</button>
+              <button matButton (click)="onSubmit()">Submit</button>
+            </div>
+          </mat-step>
+        </mat-stepper>
+      </form>
+    </mat-card-content>
+
+    <!--<mat-card-actions class="card-footer">
+    </mat-card-actions>-->
+
+  </mat-card>
+
+</div>
