@@ -35,7 +35,7 @@ export class PlaylistComponent implements OnInit {
   private _formBuilder = inject(FormBuilder);
 
   isLoading = signal(false);
-  isSuccessfull = signal(true);
+  isSuccessfull = signal(false);
 
   playlistForm = this._formBuilder.group({
     macAddress: ['', [Validators.required, Validators.pattern(/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/)]],

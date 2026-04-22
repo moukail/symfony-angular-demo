@@ -12,7 +12,7 @@ use App\Model\M3uDto;
 use App\Model\XtreamDto;
 use App\Repository\PlaylistRepository;
 
-#[Route('/api/playlists')]
+#[Route('/api/v1/playlists')]
 class PlaylistController extends AbstractController
 {
     public function __construct(
