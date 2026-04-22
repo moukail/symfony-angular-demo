@@ -1,27 +1,26 @@
-import { Injectable } from '@angular/core';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { Injectable, inject } from '@angular/core';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { switchMap, map, catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { switchMap, map, catchError } from 'rxjs/operators';
 
-import { login, loginSuccess, loginFailure, refreshTokenSuccess, logout } from '../actions/auth.actions';
+import { login, loginSuccess, loginFailure, refreshTokenSuccess, logout, refreshTokenTrigger } from '../actions/auth.actions';
 import { environment } from "../environments/environment";
 
 @Injectable()
 export class AuthEffects {
 
+  private actions$ = inject(Actions);
+  private http = inject(HttpClient);
+  private router = inject(Router);
   private base = environment.apiUrl;
-
-  constructor(
-    private actions$: Actions,
-    private http: HttpClient
-  ) {}
 
   login$ = createEffect(() =>
     this.actions$.pipe(
       ofType(login),
       switchMap(({ email, password }) =>
-        this.http.post<any>(this.base + '/api/login_check', {
+        this.http.post<any>(this.base + '/login_check', {
           email,
           password
         }).pipe(
@@ -50,7 +49,7 @@ export class AuthEffects {
   logout$ = createEffect(() =>
     this.actions$.pipe(
       ofType(logout),
-      switchMap(() =>
+      switchMap(() => 
         this.http.post<any>(this.base + '/logout', {})
       ),
       tap(() => this.router.navigate(['/login']))
@@ -59,9 +58,9 @@ export class AuthEffects {
 
   refreshToken$ = createEffect(() =>
     this.actions$.pipe(
-      ofType('[Auth] Refresh Trigger'), // optional internal trigger
+      ofType(refreshTokenTrigger),
       switchMap(() =>
-        this.http.post<any>(this.base + '/api/token/refresh', {
+        this.http.post<any>(this.base + '/token/refresh', {
           refresh_token: localStorage.getItem('refresh_token')
         }).pipe(
           map(res =>

@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpInterceptor, HttpEvent, HttpErrorResponse } from '@angular/common/http';
 import { Store } from '@ngrx/store';
-import { Observable, throwError, BehaviorSubject } from 'rxjs';
-import { take, switchMap, catchError, filter, tap } from 'rxjs/operators';
-import { refreshTokenTrigger, logout } from '../actions/auth.actions';
+import { take, switchMap } from 'rxjs/operators';
+
 import { selectAccessToken } from '../selectors/auth.selectors';
 
 @Injectable()
@@ -11,7 +10,7 @@ export class AuthInterceptor implements HttpInterceptor {
     private isRefreshing = false;
     private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
-  constructor(private store: Store) {}
+    constructor(private store: Store) { }
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         return this.store.select(selectAccessToken).pipe(

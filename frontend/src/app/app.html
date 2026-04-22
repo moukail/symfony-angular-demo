@@ -4,8 +4,18 @@
     <span>My Application</span>
     <span class="spacer"></span>
     <button routerLink="/home" mat-button>Home</button>
-    <button routerLink="/login" mat-button>Login</button>
-    <button routerLink="/dashboard" mat-button>Dashboard</button>
+
+    @if (!(isActive$ | async)) {
+      <button routerLink="/login" mat-button>Login</button>
+    }
+
+    @if (isActive$ | async) {
+      @if ((role$ | async) === 'ROLE_ADMIN') {
+        <button routerLink="/dashboard" mat-button>Dashboard</button>
+        <button routerLink="/users" mat-button>Users</button>
+      }
+      <button (click)="logout()" mat-button>Logout</button>
+    }
   </mat-toolbar>
 
   <main class="main-content">
