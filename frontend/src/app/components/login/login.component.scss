@@ -61,3 +61,18 @@ mat-form-field {
   margin-top: 16px;
   padding: 0 8px;
 }
+.auth-error-banner {
+  background-color: #fce4e4;
+  border: 1px solid #fcc2c2;
+  color: #cc0000;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  mat-icon {
+    color: #cc0000;
+  }
+}

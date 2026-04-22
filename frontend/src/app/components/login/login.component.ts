@@ -1,12 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-
-// Angular Material Imports
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { Store } from '@ngrx/store';
+
+import { login } from '../../actions/auth.actions';
+import { selectAuthError, selectAuthLoading } from '../../selectors/auth.selectors';
 
 @Component({
   selector: 'app-login',
@@ -25,10 +27,12 @@ import { MatIconModule } from '@angular/material/icon';
 export class LoginComponent {
   private fb = inject(FormBuilder);
 
-  // Toggle for password visibility
-  hidePassword = true;
+  private store = inject(Store);
 
-  // Define the form with validation rules
+  hidePassword = true;
+  error$ = this.store.select(selectAuthError);
+  loading$ = this.store.select(selectAuthLoading);
+
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]]
@@ -36,10 +40,11 @@ export class LoginComponent {
 
   onSubmit() {
     if (this.loginForm.valid) {
-      console.log('Login Submitted:', this.loginForm.value);
-      // Add your authentication service logic here
+      this.store.dispatch(login({
+        email: this.loginForm.value.email!,
+        password: this.loginForm.value.password!
+      }));
     } else {
-      // Mark all fields as touched to trigger error messages
       this.loginForm.markAllAsTouched();
     }
   }

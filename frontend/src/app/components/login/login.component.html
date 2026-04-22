@@ -3,11 +3,15 @@
   <mat-card class="login-card" elevation="4">
     
     <mat-card-header>
-      <mat-card-title>Welcome Back</mat-card-title>
-      <mat-card-subtitle>Please sign in to continue</mat-card-subtitle>
+      <mat-card-title>Login</mat-card-title>
     </mat-card-header>
 
     <mat-card-content>
+      <div *ngIf="error$ | async as error" class="auth-error-banner" data-testid="error-banner">
+        <mat-icon>error</mat-icon>
+        <span>{{ error }}</span>
+      </div>
+
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
         
         <mat-form-field appearance="outline" color="primary">
