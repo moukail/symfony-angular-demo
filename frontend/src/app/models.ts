@@ -23,3 +23,9 @@ export interface PlaylistResponse {
     username?: string;
     password?: string;
 }
+
+export interface User {
+  id: number;
+  email: string;
+  roles: string[];
+}

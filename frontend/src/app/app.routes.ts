@@ -5,6 +5,7 @@ import { LoginComponent } from './components/login/login.component';
 import { PlaylistComponent } from './components/playlist/playlist.component';
 import { AuthGuard } from './guards/auth.guard';
 import { AdminGuard } from './guards/admin.guard';
+import { UserComponent } from './components/user/user.component';
 
 export const routes: Routes = [
     {
@@ -23,6 +24,11 @@ export const routes: Routes = [
     {
         path: 'dashboard',
         component: DashboardComponent,
+        canActivate: [AuthGuard, AdminGuard]
+    },
+    {
+        path: 'users',
+        component: UserComponent,
         canActivate: [AuthGuard, AdminGuard]
     },
     {
