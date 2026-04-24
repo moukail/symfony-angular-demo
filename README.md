@@ -55,5 +55,5 @@ Curl
 ```bash
 curl -i -X POST -H "Content-Type: application/json" \
   http://localhost:8001/api/login_check \
-  -d '{"email":"admin@datamatch.nl","password":"pass_1234"}'
+  -d '{"email":"user@example.com","password":"pa55w0rd"}'
 ```
