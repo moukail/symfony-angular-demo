@@ -107,4 +107,4 @@ jobs:
         chmod 600 ~/id_ed25519
           
         echo "::group::Deploy"    
-        rsync -avz --delete --rsync-path="sudo rsync" -e 'ssh -i ./id_ed25519 -o StrictHostKeyChecking=no' . ${{vars.SSH_USER}}@${{vars.DOMAIN_NAME}}:${{env.dest}}
+        rsync -avz --delete --rsync-path="sudo rsync" -e 'ssh -i ~/id_ed25519 -o StrictHostKeyChecking=no' . ${{vars.SSH_USER}}@${{vars.DOMAIN_NAME}}:${{env.dest}}
