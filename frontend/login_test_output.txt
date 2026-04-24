@@ -1,0 +1,44 @@
+[4m>>>> Executing external compose provider "/usr/local/bin/docker-compose". Please see podman-compose(1) for how to disable this message. <<<<
+
+[0m
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.4 [39m[90m/var/www[39m
+
+ [31m❯[39m src/app/components/login/login.component.spec.ts [2m([22m[2m7 tests[22m[2m | [22m[31m7 failed[39m[2m)[22m[32m 5[2mms[22m[39m
+[31m     [31m×[31m should create[39m[32m 3[2mms[22m[39m
+[31m     [31m×[31m should have an invalid form when empty[39m[32m 0[2mms[22m[39m
+[31m     [31m×[31m should validate email format[39m[32m 0[2mms[22m[39m
+[31m     [31m×[31m should validate password minimum length[39m[32m 0[2mms[22m[39m
+[31m     [31m×[31m should dispatch login action when valid form is submitted[39m[32m 0[2mms[22m[39m
+[31m     [31m×[31m should mark all fields as touched on invalid submission[39m[32m 0[2mms[22m[39m
+[31m     [31m×[31m should toggle password visibility[39m[32m 0[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 7 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/app/components/login/login.component.spec.ts[2m > [22mLoginComponent[2m > [22mshould create
+[41m[1m FAIL [22m[49m src/app/components/login/login.component.spec.ts[2m > [22mLoginComponent[2m > [22mshould have an invalid form when empty
+[41m[1m FAIL [22m[49m src/app/components/login/login.component.spec.ts[2m > [22mLoginComponent[2m > [22mshould validate email format
+[41m[1m FAIL [22m[49m src/app/components/login/login.component.spec.ts[2m > [22mLoginComponent[2m > [22mshould validate password minimum length
+[41m[1m FAIL [22m[49m src/app/components/login/login.component.spec.ts[2m > [22mLoginComponent[2m > [22mshould dispatch login action when valid form is submitted
+[41m[1m FAIL [22m[49m src/app/components/login/login.component.spec.ts[2m > [22mLoginComponent[2m > [22mshould mark all fields as touched on invalid submission
+[41m[1m FAIL [22m[49m src/app/components/login/login.component.spec.ts[2m > [22mLoginComponent[2m > [22mshould toggle password visibility
+[31m[1mError[22m: Need to call TestBed.initTestEnvironment() first[39m
+[90m [2m❯[22m TestBedImpl.get compiler [as compiler] ../darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/testing/src/test_bed.ts:[2m718:12[22m[39m
+[90m [2m❯[22m compiler ../darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/testing/src/test_bed.ts:[2m584:9[22m[39m
+[90m [2m❯[22m configureTestingModule ../darwin_arm64-fastbuild-ST-fdfa778d11ba/bin/packages/core/testing/src/test_bed.ts:[2m319:32[22m[39m
+[36m [2m❯[22m src/app/components/login/login.component.spec.ts:[2m17:19[22m[39m
+    [90m 15|[39m
+    [90m 16|[39m   [34mbeforeEach[39m([35masync[39m () [33m=>[39m {
+    [90m 17|[39m     [35mawait[39m [33mTestBed[39m[33m.[39m[34mconfigureTestingModule[39m({
+    [90m   |[39m                   [31m^[39m
+    [90m 18|[39m       imports[33m:[39m [
+    [90m 19|[39m         [33mLoginComponent[39m[33m,[39m [90m// It's standalone[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m7 failed[39m[22m[90m (7)[39m
+[2m   Start at [22m 12:56:32
+[2m   Duration [22m 494ms[2m (transform 39ms, setup 0ms, import 320ms, tests 5ms, environment 0ms)[22m
+
+Error: executing /usr/local/bin/docker-compose exec frontend npx vitest run login.component.spec.ts: exit status 1
