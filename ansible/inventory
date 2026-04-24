@@ -1,0 +1,2 @@
+[web]
+mytv.moukail.nl ansible_user=devops ansible_ssh_private_key_file=~/id_ed25519 acme_email=moukafih@live.nl

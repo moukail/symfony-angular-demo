@@ -1,0 +1,80 @@
+---
+- hosts: web
+  become: yes
+
+  vars:
+    hostname: "{{ inventory_hostname }}"
+    root_dir: "/var/www/{{ hostname }}"
+    acme_email: "moukafih@live.nl"
+    php_version: "8.5.0"
+    nginx_version: "1.30.0"
+    openssl_version: "3.5.5"
+
+  roles:
+    - ansible-role-swap
+    - ansible-role-php
+    - ansible-role-nginx
+    - ansible-role-letsencrypt
+
+  tasks:
+    - name: Create project directory and set its permissions
+      become: true
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ web_user | default('www-data') }}"
+        group: "{{ web_user | default('www-data') }}"
+        recurse: yes
+      loop:
+        - "{{ root_dir }}"
+        - "{{ root_dir }}/frontend"
+        - "{{ root_dir }}/backend/var/log"
+
+    - name: check if index.html exists
+      stat:
+        path: "{{ root_dir }}/frontend/index.html"
+      register: index_html
+
+    - name: Creating index.html file
+      when: not index_html.stat.exists
+      template:
+        src: index.html
+        dest: "{{ root_dir }}/frontend"
+        owner: "{{ web_user | default('www-data') }}"
+        group: "{{ web_user | default('www-data') }}"
+        mode: 0644
+
+    - name: Include tasks from ansible-role-letsencrypt
+      ansible.builtin.include_role:
+        name: ansible-role-letsencrypt
+        tasks_from: nginx
+
+    - name: Creating NGINX conf file
+      ansible.builtin.template:
+        src: nginx.conf.j2
+        dest: "/etc/nginx/conf.d/{{ hostname }}.conf"
+      notify: Reload Nginx
+
+#    - name: Configure Nginx
+#      template:
+#        src: nginx.conf.j2
+#        dest: "/etc/nginx/sites-available/{{ hostname }}"
+#      notify: Reload Nginx
+
+#    - name: Enable site
+#      file:
+#        src: "/etc/nginx/sites-available/{{ hostname }}"
+#        dest: "/etc/nginx/sites-enabled/{{ hostname }}"
+#        state: link
+
+#    - name: Remove default Nginx site
+#      file:
+#        path: "/etc/nginx/sites-enabled/default"
+#        state: absent
+#      notify: Reload Nginx
+
+  handlers:
+    - name: Reload Nginx
+      service:
+        name: nginx
+        state: reloaded

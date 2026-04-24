@@ -1,0 +1,20 @@
+collections:
+  - name: community.general
+  - name: community.crypto
+
+roles:
+  - name: ansible-role-swap
+    src: https://github.com/moukail/ansible-role-swap.git
+    version: main
+  - name: ansible-role-openssl
+    src: https://github.com/moukail/ansible-role-openssl.git
+    version: main
+  - name: ansible-role-php
+    src: https://github.com/moukail/ansible-role-php.git
+    version: main
+  - name: ansible-role-nginx
+    src: https://github.com/moukail/ansible-role-nginx.git
+    version: main
+  - name: ansible-role-letsencrypt
+    src: https://github.com/moukail/ansible-role-letsencrypt.git
+    version: main
