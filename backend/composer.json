@@ -1,5 +1,7 @@
 {
     "type": "project",
+    "name": "moukafih/symfony-angular-demo",
+    "description": "Symfony Angular Demo",
     "license": "proprietary",
     "minimum-stability": "stable",
     "prefer-stable": true,
