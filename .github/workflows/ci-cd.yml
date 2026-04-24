@@ -101,10 +101,10 @@ jobs:
       env:
         dest: '/var/www/${{vars.DOMAIN_NAME}}/frontend'
       run: |
-        cd dist
+        cd dist/frontend/browser
         echo "::group::Prepare Certificate"
-        echo "${{secrets.OPENSSH_KEY}}" > id_ed25519
-        chmod 600 ./id_ed25519
+        echo "${{secrets.OPENSSH_KEY}}" > ~/id_ed25519
+        chmod 600 ~/id_ed25519
           
         echo "::group::Deploy"    
         rsync -avz --delete --rsync-path="sudo rsync" -e 'ssh -i ./id_ed25519 -o StrictHostKeyChecking=no' . ${{vars.SSH_USER}}@${{vars.DOMAIN_NAME}}:${{env.dest}}
