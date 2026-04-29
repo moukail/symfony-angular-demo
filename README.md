@@ -52,8 +52,6 @@ podman compose exec backend symfony console doctrine:query:dql "SELECT u FROM Ap
 podman build -t docker.io/moukail/symfony-angular-demo-backend:latest -f ./docker/backend/Containerfile ./backend
 podman build -t docker.io/moukail/symfony-angular-demo-frontend:latest -f ./docker/frontend/Containerfile ./frontend
 
-./docker/frontend
-
 podman push docker.io/moukail/symfony-angular-demo-backend:latest
 podman push docker.io/moukail/symfony-angular-demo-frontend:latest
 
