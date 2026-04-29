@@ -48,6 +48,35 @@ podman compose exec backend symfony console doctrine:database:create --if-not-ex
 podman compose exec backend symfony console make:controller --no-template Login
 
 podman compose exec backend symfony console doctrine:query:dql "SELECT u FROM App\Entity\User u"
+
+podman build -t docker.io/moukail/symfony-angular-demo-backend:latest -f ./docker/backend/Containerfile ./backend
+podman build -t docker.io/moukail/symfony-angular-demo-frontend:latest -f ./docker/frontend/Containerfile ./frontend
+
+./docker/frontend
+
+podman push docker.io/moukail/symfony-angular-demo-backend:latest
+podman push docker.io/moukail/symfony-angular-demo-frontend:latest
+
+podman run --rm -p 8000:80 docker.io/moukail/symfony-angular-demo-backend:latest
+podman run --rm -p 8001:80 docker.io/moukail/symfony-angular-demo-frontend:latest
+```
+
+Openshift
+=========
+```bash
+#### Template
+oc get template -n openshift
+
+oc process -f kubernetes/template.yml --parameters
+oc process -f kubernetes/template.yml -p MYSQL_DATABASE=mydemo -p MYSQL_ROOT_PASSWORD=pa55w0rd | oc apply -f -
+
+oc new-app --file kubernetes/template.yml -p MYSQL_DATABASE=mydemo -p MYSQL_ROOT_PASSWORD=pa55w0rd
+
+oc exec pods/backend-57fbdc664d-f7d2h -- bin/console
+oc exec pod/backend-57fbdc664d-7p9td -- bin/console app:create-admin admin@moukafih.nl password
+
+oc expose service/frontend
+curl -i http://frontend-default.apps-crc.testing
 ```
 
 Curl
