@@ -1,0 +1,10 @@
+FROM docker.io/library/node:25.9-alpine3.23 AS build
+
+WORKDIR /var/www
+
+COPY . .
+RUN npm install --legacy-peer-deps && npm run build -- --configuration production
+
+FROM docker.io/library/nginx:1.30-alpine3.23-slim
+
+COPY --from=build /var/www/dist/frontend/browser /usr/share/nginx/html
