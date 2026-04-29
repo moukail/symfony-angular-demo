@@ -9,7 +9,7 @@
     <mat-card-content>
       <div *ngIf="error$ | async as error" class="auth-error-banner" data-testid="error-banner">
         <mat-icon>error</mat-icon>
-        <span>{{ error }}</span>
+        <span>Error is occured</span>
       </div>
 
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
