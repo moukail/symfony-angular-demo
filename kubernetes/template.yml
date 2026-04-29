@@ -10,6 +10,7 @@ objects:
     metadata:
       name: database
     spec:
+      replicas: 3
       selector:
         matchLabels:
           app: database
@@ -18,24 +19,19 @@ objects:
           labels:
             app: database
         spec:
-          replicas: 3
           containers:
             - name: database
               image: docker.io/library/mysql:9.7-oraclelinux9
               ports:
                 - containerPort: 3306
               volumeMounts:
-                - name: data
+                - name: database-pvc
                   mountPath: /var/lib/mysql
               env:
                 - name: MYSQL_ROOT_PASSWORD
                   value: ${MYSQL_ROOT_PASSWORD}
                 - name: MYSQL_DATABASE
                   value: ${MYSQL_DATABASE}
-          volumes:
-            - name: data
-              persistentVolumeClaim:
-                claimName: database-pvc
       volumeClaimTemplates:
         - metadata:
             name: database-pvc
@@ -45,11 +41,36 @@ objects:
               requests:
                 storage: 1Gi
 
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: backend-nginx-config
+    data:
+      default.conf: |
+        server {
+            listen 80;
+            root /var/www/html/public;
+            index index.php;
+
+            location / {
+                try_files $uri $uri/ /index.php$is_args$args;
+            }
+
+            location ~ \.php$ {
+                fastcgi_pass localhost:9000;   # localhost, not a K8s service
+                fastcgi_split_path_info ^(.+\.php)(/.*)$;
+                include fastcgi_params;
+                fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+                fastcgi_param DOCUMENT_ROOT $document_root;
+            }
+        }
+
   - apiVersion: apps/v1
     kind: Deployment 
     metadata:
       name: backend 
     spec:
+      replicas: 3
       selector:
         matchLabels: 
           app: backend
@@ -58,12 +79,21 @@ objects:
           labels:
             app: backend
         spec:
-          replicas: 3
+          initContainers:
+            - name: copy-app
+              image: docker.io/moukail/symfony-angular-demo-backend:latest
+              command: [ "sh", "-c", "cp -r /var/www/html/. /app-files/" ]
+              volumeMounts:
+                - name: app-files
+                  mountPath: /app-files
           containers: 
             - name: backend 
               image: docker.io/moukail/symfony-angular-demo-backend:latest
               ports:
-                - containerPort: 80
+                - containerPort: 9000
+              volumeMounts:
+                - name: app-files
+                  mountPath: /var/www/html
               resources:
                 requests:
                   memory: "128Mi"
@@ -74,12 +104,35 @@ objects:
               env:
                 - name: DATABASE_URL
                   value: "mysql://${MYSQL_ROOT_USER}:${MYSQL_ROOT_PASSWORD}@database:3306/${MYSQL_DATABASE}"
-  
+            - name: nginx 
+              image: docker.io/library/nginx:1.30-alpine3.23-slim
+              ports:
+                - containerPort: 80
+              volumeMounts:
+                - name: app-files
+                  mountPath: /var/www/html
+                - name: backend-nginx-config
+                  mountPath: /etc/nginx/conf.d
+              resources:
+                requests:
+                  memory: "64Mi"
+                  cpu: "64m"
+                limits:
+                  memory: "128Mi"
+                  cpu: "128m"
+      volumes:
+        - name: app-files
+          emptyDir: {}
+        - name: backend-nginx-config
+          configMap:
+            name: backend-nginx-config
+
   - apiVersion: apps/v1
     kind: Deployment 
     metadata:
       name: frontend 
     spec:
+      replicas: 3
       selector:
         matchLabels: 
           app: frontend
@@ -88,12 +141,23 @@ objects:
           labels:
             app: frontend
         spec:
-          replicas: 3
           containers: 
             - name: frontend 
               image: docker.io/moukail/symfony-angular-demo-frontend:latest
               ports:
                 - containerPort: 80    
+
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: backend
+    spec:
+      selector:
+        app: backend
+      ports:
+        - protocol: TCP
+          port: 80
+          targetPort: 80
 
   - apiVersion: v1
     kind: Service
@@ -107,6 +171,28 @@ objects:
           port: 80
           targetPort: 80
 
+  - apiVersion: route.openshift.io/v1
+    kind: Route
+    metadata:
+      name: backend
+    spec:
+      host: demo-default.apps-crc.testing
+      path: /api
+      to:
+        kind: Service
+        name: backend
+
+  - apiVersion: route.openshift.io/v1
+    kind: Route
+    metadata:
+      name: frontend
+    spec:
+      host: demo-fault.apps-crc.testing
+      path: /
+      to:
+        kind: Service
+        name: frontend
+    
 parameters:
   - name: MYSQL_DATABASE
     required: true
