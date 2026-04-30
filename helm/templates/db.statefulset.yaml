@@ -29,7 +29,10 @@ spec:
               mountPath: /var/lib/mysql
           env:
             - name: MYSQL_ROOT_PASSWORD
-              value: {{ .Values.database.rootPassword }}
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key: mysql-root-password
             - name: MYSQL_DATABASE
               value: {{ .Values.database.databaseName }}
   volumeClaimTemplates:

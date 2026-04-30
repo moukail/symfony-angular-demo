@@ -5,11 +5,11 @@ nginx:
 backend:
   image: docker.io/moukail/symfony-angular-demo-backend:latest
   port: 9000
-  replicas: 3
+  replicas: 1
   resources:
     requests:
-      memory: "128Mi"
-      cpu: "128m"
+      memory: "64Mi"
+      cpu: "64m"
     limits:
       memory: "256Mi"
       cpu: "256m"
@@ -18,7 +18,7 @@ frontend:
   image: docker.io/moukail/symfony-angular-demo-frontend:latest
   port: 80
   host: demo-default.apps-crc.testing
-  replicas: 3
+  replicas: 1
   resources:
     requests:
       memory: "64Mi"
@@ -30,14 +30,14 @@ frontend:
 database:
   image: docker.io/library/mysql:9.7-oraclelinux9
   port: 3306
-  replicas: 3
-  rootPassword: ${MYSQL_ROOT_PASSWORD}
-  databaseName: ${MYSQL_DATABASE}
+  replicas: 1
+  rootPassword: "changeme"
+  databaseName: "mydemo"
   storage: 1Gi
   resources:
     requests:
-      memory: "256Mi"
-      cpu: "256m"
+      memory: "128Mi"
+      cpu: "100m"
     limits:
       memory: "512Mi"
       cpu: "512m"

@@ -24,3 +24,10 @@ spec:
             limits:
               memory: {{ .Values.frontend.resources.limits.memory }}
               cpu: {{ .Values.frontend.resources.limits.cpu }}
+          volumeMounts:
+            - name: frontend-nginx-config
+              mountPath: /etc/nginx/conf.d
+      volumes:
+        - name: frontend-nginx-config
+          configMap:
+            name: frontend-nginx-config

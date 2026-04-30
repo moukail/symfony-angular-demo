@@ -36,7 +36,10 @@ spec:
               cpu: "256m"
           env:
             - name: DATABASE_URL
-              value: "mysql://${MYSQL_ROOT_USER}:${MYSQL_ROOT_PASSWORD}@database:3306/${MYSQL_DATABASE}"
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key: database-url
         - name: nginx 
           image: {{ .Values.nginx.image }}
           ports:

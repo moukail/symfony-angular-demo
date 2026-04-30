@@ -10,3 +10,9 @@ spec:
         - name: database-migrations
           image: {{ .Values.backend.image }}
           command: [ "php", "bin/console", "doctrine:migrations:migrate", "--no-interaction"]
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key: database-url
