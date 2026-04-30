@@ -159,6 +159,13 @@ objects:
               image: docker.io/moukail/symfony-angular-demo-frontend:latest
               ports:
                 - containerPort: 80    
+              resources:
+                requests:
+                  memory: "64Mi"
+                  cpu: "64m"
+                limits:
+                  memory: "128Mi"
+                  cpu: "128m"
 
   - apiVersion: v1
     kind: Service

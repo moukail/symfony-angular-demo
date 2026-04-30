@@ -70,12 +70,41 @@ oc process -f kubernetes/template.yml -p MYSQL_DATABASE=mydemo -p MYSQL_ROOT_PAS
 
 oc new-app --file kubernetes/template.yml -p MYSQL_DATABASE=mydemo -p MYSQL_ROOT_PASSWORD=pa55w0rd
 
-oc exec pods/backend-57fbdc664d-f7d2h -- bin/console
-oc exec pod/backend-57fbdc664d-7p9td -- bin/console app:create-admin admin@moukafih.nl password
+oc exec deployment.apps/backend -- bin/console app:create-admin admin@moukafih.nl password
 
 oc expose service/frontend
 curl -i http://frontend-default.apps-crc.testing
 ```
+
+Helm
+====
+```bash
+#### Create helm
+helm create helm
+helm template helm --debug
+
+#### Delete resources
+oc delete cm backend-nginx-config
+oc delete deployment backend frontend
+oc delete statefulset database
+oc delete svc database backend frontend
+oc delete route backend frontend
+oc delete job database-migrations
+
+#### Install helm
+helm install -f helm/values.yaml mydemo ./helm  \
+  --set database.rootPassword=SecurePassword123! \
+  --set database.databaseName=mydemo
+helm install -f helm/values.yaml ./helm --generate-name
+
+#### Upgrade helm
+helm upgrade --install mydemo ./helm \
+  --set database.rootPassword=SecurePassword123! \
+  --set database.databaseName=mydemo
+
+#### Delete helm
+helm uninstall -n default mydemo
+oc delete pvc database-pvc-database-0
 
 Curl
 ====
