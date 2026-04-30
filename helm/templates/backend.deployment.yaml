@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment 
+metadata:
+  name: backend 
+spec:
+  replicas: {{ .Values.backend.replicas }}
+  selector:
+    matchLabels: 
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      initContainers:
+        - name: copy-app
+          image: {{ .Values.backend.image }}
+          command: [ "sh", "-c", "cp -r /var/www/html/. /app-files/" ]
+          volumeMounts:
+            - name: app-files
+              mountPath: /app-files
+      containers: 
+        - name: backend 
+          image: {{ .Values.backend.image }}
+          ports:
+            - containerPort: {{ .Values.backend.port }}
+          volumeMounts:
+            - name: app-files
+              mountPath: /var/www/html
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "128m"
+            limits:
+              memory: "256Mi"
+              cpu: "256m"
+          env:
+            - name: DATABASE_URL
+              value: "mysql://${MYSQL_ROOT_USER}:${MYSQL_ROOT_PASSWORD}@database:3306/${MYSQL_DATABASE}"
+        - name: nginx 
+          image: {{ .Values.nginx.image }}
+          ports:
+            - containerPort: {{ .Values.nginx.port }}
+          volumeMounts:
+            - name: app-files
+              mountPath: /var/www/html
+            - name: backend-nginx-config
+              mountPath: /etc/nginx/conf.d
+          resources:
+            requests:
+              memory: {{ .Values.backend.resources.requests.memory }}
+              cpu: {{ .Values.backend.resources.requests.cpu }}
+            limits:
+              memory: {{ .Values.backend.resources.limits.memory }}
+              cpu: {{ .Values.backend.resources.limits.cpu }}
+      volumes:
+        - name: app-files
+          emptyDir: {}
+        - name: backend-nginx-config
+          configMap:
+            name: backend-nginx-config

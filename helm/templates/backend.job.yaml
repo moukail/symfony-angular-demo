@@ -1,0 +1,12 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: database-migrations
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: database-migrations
+          image: {{ .Values.backend.image }}
+          command: [ "php", "bin/console", "doctrine:migrations:migrate", "--no-interaction"]

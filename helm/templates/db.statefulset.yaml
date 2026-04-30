@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: database
+spec:
+  replicas: {{ .Values.database.replicas }}
+  selector:
+    matchLabels:
+      app: database
+  template:
+    metadata:
+      labels:
+        app: database
+    spec:
+      containers:
+        - name: database
+          image: {{ .Values.database.image }}
+          ports:
+            - containerPort: {{ .Values.database.port }}
+          resources:
+            requests:
+              memory: {{ .Values.database.resources.requests.memory }}
+              cpu: {{ .Values.database.resources.requests.cpu }}
+            limits:
+              memory: {{ .Values.database.resources.limits.memory }}
+              cpu: {{ .Values.database.resources.limits.cpu }}
+          volumeMounts:
+            - name: database-pvc
+              mountPath: /var/lib/mysql
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: {{ .Values.database.rootPassword }}
+            - name: MYSQL_DATABASE
+              value: {{ .Values.database.databaseName }}
+  volumeClaimTemplates:
+    - metadata:
+        name: database-pvc
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: {{ .Values.database.storage }}

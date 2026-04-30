@@ -1,0 +1,21 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: frontend
+spec:
+  host: {{ .Values.frontend.host }}
+  path: /
+  to:
+    kind: Service
+    name: frontend
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: backend
+spec:
+  host: {{ .Values.frontend.host }}
+  path: /api
+  to:
+    kind: Service
+    name: backend
