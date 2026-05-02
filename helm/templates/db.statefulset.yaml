@@ -1,9 +1,10 @@
+{{ with .Values.database }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: database
 spec:
-  replicas: {{ .Values.database.replicas }}
+  replicas: {{ .replicas }}
   selector:
     matchLabels:
       app: database
@@ -14,16 +15,16 @@ spec:
     spec:
       containers:
         - name: database
-          image: {{ .Values.database.image }}
+          image: {{ .image | quote }}
           ports:
-            - containerPort: {{ .Values.database.port }}
+            - containerPort: {{ .port | quote }}
           resources:
             requests:
-              memory: {{ .Values.database.resources.requests.memory }}
-              cpu: {{ .Values.database.resources.requests.cpu }}
+              memory: {{ .resources.requests.memory | default "64Mi" | quote }}
+              cpu: {{ .resources.requests.cpu | default "64m" | quote }}
             limits:
-              memory: {{ .Values.database.resources.limits.memory }}
-              cpu: {{ .Values.database.resources.limits.cpu }}
+              memory: {{ .resources.limits.memory | default "256Mi" | quote }}
+              cpu: {{ .resources.limits.cpu | default "256m" | quote }}
           volumeMounts:
             - name: database-pvc
               mountPath: /var/lib/mysql
@@ -34,7 +35,7 @@ spec:
                   name: database-secret
                   key: mysql-root-password
             - name: MYSQL_DATABASE
-              value: {{ .Values.database.databaseName }}
+              value: {{ .databaseName | quote }}
   volumeClaimTemplates:
     - metadata:
         name: database-pvc
@@ -42,4 +43,5 @@ spec:
         accessModes: ["ReadWriteOnce"]
         resources:
           requests:
-            storage: {{ .Values.database.storage }}
+            storage: {{ .storage | quote }}
+{{ end }}

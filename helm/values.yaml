@@ -1,6 +1,13 @@
 nginx:
   image: docker.io/library/nginx:1.30-alpine3.23-slim
   port: 80
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "64m"
+    limits:
+      memory: "128Mi"
+      cpu: "128m"
 
 backend:
   image: docker.io/moukail/symfony-angular-demo-backend:latest

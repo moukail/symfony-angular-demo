@@ -1,9 +1,10 @@
+{{ with .Values.backend }}
 apiVersion: apps/v1
 kind: Deployment 
 metadata:
   name: backend 
 spec:
-  replicas: {{ .Values.backend.replicas }}
+  replicas: {{ .replicas }}
   selector:
     matchLabels: 
       app: backend
@@ -14,36 +15,37 @@ spec:
     spec:
       initContainers:
         - name: copy-app
-          image: {{ .Values.backend.image }}
+          image: {{ .image | quote }}
           command: [ "sh", "-c", "cp -r /var/www/html/. /app-files/" ]
           volumeMounts:
             - name: app-files
               mountPath: /app-files
       containers: 
         - name: backend 
-          image: {{ .Values.backend.image }}
+          image: {{ .image | quote }}
           ports:
-            - containerPort: {{ .Values.backend.port }}
+            - containerPort: {{ .port | quote }}
           volumeMounts:
             - name: app-files
               mountPath: /var/www/html
           resources:
             requests:
-              memory: "128Mi"
-              cpu: "128m"
+              memory: {{ .resources.requests.memory | default "64Mi" | quote }}
+              cpu: {{ .resources.requests.cpu | default "64m" | quote }}
             limits:
-              memory: "256Mi"
-              cpu: "256m"
+              memory: {{ .resources.limits.memory | default "256Mi" | quote }}
+              cpu: {{ .resources.limits.cpu | default "256m" | quote }}
           env:
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
                   name: database-secret
                   key: database-url
+        {{ with .Values.nginx }}
         - name: nginx 
-          image: {{ .Values.nginx.image }}
+          image: {{ .image | quote }}
           ports:
-            - containerPort: {{ .Values.nginx.port }}
+            - containerPort: {{ .port | quote }}
           volumeMounts:
             - name: app-files
               mountPath: /var/www/html
@@ -51,14 +53,16 @@ spec:
               mountPath: /etc/nginx/conf.d
           resources:
             requests:
-              memory: {{ .Values.backend.resources.requests.memory }}
-              cpu: {{ .Values.backend.resources.requests.cpu }}
+              memory: {{ .resources.requests.memory | default "64Mi" | quote }}
+              cpu: {{ .resources.requests.cpu | default "64m" | quote }}
             limits:
-              memory: {{ .Values.backend.resources.limits.memory }}
-              cpu: {{ .Values.backend.resources.limits.cpu }}
+              memory: {{ .resources.limits.memory | default "256Mi" | quote }}
+              cpu: {{ .resources.limits.cpu | default "256m" | quote }}
+        {{ end }}
       volumes:
         - name: app-files
           emptyDir: {}
         - name: backend-nginx-config
           configMap:
             name: backend-nginx-config
+{{ end }}

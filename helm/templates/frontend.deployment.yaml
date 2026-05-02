@@ -1,9 +1,10 @@
+{{ with .Values.frontend }}
 apiVersion: apps/v1
 kind: Deployment 
 metadata:
   name: frontend 
 spec:
-  replicas: {{ .Values.frontend.replicas }}
+  replicas: {{ .replicas }}
   selector:
     matchLabels: 
       app: frontend
@@ -14,16 +15,16 @@ spec:
     spec:
       containers: 
         - name: frontend 
-          image: {{ .Values.frontend.image }}
+          image: {{ .image | quote }}
           ports:
-            - containerPort: {{ .Values.frontend.port }}
+            - containerPort: {{ .port | quote }}
           resources:
             requests:
-              memory: {{ .Values.frontend.resources.requests.memory }}
-              cpu: {{ .Values.frontend.resources.requests.cpu }}
+              memory: {{ .resources.requests.memory | default "64Mi" | quote }}
+              cpu: {{ .resources.requests.cpu | default "64m" | quote }}
             limits:
-              memory: {{ .Values.frontend.resources.limits.memory }}
-              cpu: {{ .Values.frontend.resources.limits.cpu }}
+              memory: {{ .resources.limits.memory | default "256Mi" | quote }}
+              cpu: {{ .resources.limits.cpu | default "256m" | quote }}
           volumeMounts:
             - name: frontend-nginx-config
               mountPath: /etc/nginx/conf.d
@@ -31,3 +32,4 @@ spec:
         - name: frontend-nginx-config
           configMap:
             name: frontend-nginx-config
+{{ end }}
