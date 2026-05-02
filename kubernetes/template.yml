@@ -57,7 +57,7 @@ objects:
             }
 
             location ~ \.php$ {
-                fastcgi_pass localhost:9000;   # localhost, not a K8s service
+                fastcgi_pass localhost:9000;
                 fastcgi_split_path_info ^(.+\.php)(/.*)$;
                 include fastcgi_params;
                 fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
