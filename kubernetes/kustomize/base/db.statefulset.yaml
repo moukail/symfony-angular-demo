@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: database
+  template:
+    metadata:
+      labels:
+        app: database
+    spec:
+      containers:
+        - name: database
+          image: docker.io/library/mysql:9.7-oraclelinux9
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: database-pvc
+              mountPath: /var/lib/mysql
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "p@ssw0rd123"
+            - name: MYSQL_DATABASE
+              value: "mytv"
+  volumeClaimTemplates:
+    - metadata:
+        name: database-pvc
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi

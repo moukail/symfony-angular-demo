@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment 
+metadata:
+  name: backend 
+spec:
+  replicas: 1
+  selector:
+    matchLabels: 
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      initContainers:
+        - name: copy-app
+          image: docker.io/moukail/symfony-angular-demo-backend:latest
+          command: [ "sh", "-c", "cp -r /var/www/html/. /app-files/" ]
+          volumeMounts:
+            - name: app-files
+              mountPath: /app-files
+      containers: 
+        - name: backend 
+          image: docker.io/moukail/symfony-angular-demo-backend:latest
+          ports:
+            - containerPort: 9000
+          volumeMounts:
+            - name: app-files
+              mountPath: /var/www/html
+          resources:
+            requests:
+              memory: "16Mi"
+              cpu: "16m"
+            limits:
+              memory: "128Mi"
+              cpu: "128m"
+          env:
+            - name: MYSQL_ROOT_USER
+              value: "root"
+            - name: MYSQL_ROOT_PASSWORD
+              value: "p@ssw0rd123"
+            - name: MYSQL_DATABASE
+              value: "mytv"
+            - name: DATABASE_URL
+              value: "mysql://$(MYSQL_ROOT_USER):$(MYSQL_ROOT_PASSWORD)@database:3306/$(MYSQL_DATABASE)"
+        - name: nginx 
+          image: docker.io/library/nginx:1.30-alpine3.23-slim
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: app-files
+              mountPath: /var/www/html
+            - name: backend-nginx-config
+              mountPath: /etc/nginx/conf.d
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "32m"
+            limits:
+              memory: "128Mi"
+              cpu: "128m"
+      volumes:
+        - name: app-files
+          emptyDir: {}
+        - name: backend-nginx-config
+          configMap:
+            name: backend-nginx-config
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: database-migrations
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: database-migrations
+          image: docker.io/moukail/symfony-angular-demo-backend:latest
+          command: [ "php", "bin/console", "doctrine:migrations:migrate", "--no-interaction"]
+          env:
+            - name: MYSQL_ROOT_USER
+              value: "root"
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: MYSQL_ROOT_PASSWORD
+            - name: MYSQL_DATABASE
+              value: "mytv"
+            - name: DATABASE_URL
+              value: "mysql://$(MYSQL_ROOT_USER):$(MYSQL_ROOT_PASSWORD)@database:3306/$(MYSQL_DATABASE)"

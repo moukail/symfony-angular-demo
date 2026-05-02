@@ -1,0 +1,21 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: backend
+spec:
+  host: demo-default.apps-crc.testing
+  path: /api
+  to:
+    kind: Service
+    name: backend
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: frontend
+spec:
+  host: demo-default.apps-crc.testing
+  path: /
+  to:
+    kind: Service
+    name: frontend
