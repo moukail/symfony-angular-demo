@@ -140,6 +140,23 @@ objects:
               image: docker.io/moukail/symfony-angular-demo-backend:latest
               command: [ "php", "bin/console", "doctrine:migrations:migrate", "--no-interaction"]
 
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: frontend-nginx-config
+    data:
+      default.conf: |
+        server {
+            listen 80;
+            server_name localhost;
+            root /usr/share/nginx/html;
+            index index.html index.htm;
+
+            location / {
+                try_files $uri $uri/ /index.html;
+            }
+        }
+
   - apiVersion: apps/v1
     kind: Deployment 
     metadata:
@@ -166,6 +183,13 @@ objects:
                 limits:
                   memory: "128Mi"
                   cpu: "128m"
+              volumeMounts:
+                - name: frontend-nginx-config
+                  mountPath: /etc/nginx/conf.d
+          volumes:
+            - name: frontend-nginx-config
+              configMap:
+                name: frontend-nginx-config
 
   - apiVersion: v1
     kind: Service
