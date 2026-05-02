@@ -11,6 +11,9 @@ echo "==> Database ready."
 echo "==> Running migrations..."
 symfony console doctrine:migrations:migrate --no-interaction --allow-no-migration
 
+echo "==> Create admin user..."
+symfony console -n doctrine:fixtures:load
+
 echo "==> Warming up cache..."
 symfony console cache:warmup --env=prod
 
