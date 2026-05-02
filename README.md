@@ -74,6 +74,14 @@ oc exec deployment.apps/backend -- bin/console app:create-admin admin@moukafih.n
 
 oc expose service/frontend
 curl -i http://frontend-default.apps-crc.testing
+
+#### Delete resources
+oc delete cm backend-nginx-config
+oc delete deployment backend frontend
+oc delete statefulset database
+oc delete svc database backend frontend
+oc delete route backend frontend
+oc delete job database-migrations
 ```
 
 Helm
@@ -83,28 +91,30 @@ Helm
 helm create helm
 helm template helm --debug
 
-#### Delete resources
-oc delete cm backend-nginx-config
-oc delete deployment backend frontend
-oc delete statefulset database
-oc delete svc database backend frontend
-oc delete route backend frontend
-oc delete job database-migrations
-
 #### Install helm
 helm install -f helm/values.yaml mydemo ./helm  \
   --set database.rootPassword=SecurePassword123! \
   --set database.databaseName=mydemo
 helm install -f helm/values.yaml ./helm --generate-name
+helm ls
+helm history mydemo
 
 #### Upgrade helm
-helm upgrade --install mydemo ./helm \
-  --set database.rootPassword=SecurePassword123! \
-  --set database.databaseName=mydemo
+helm upgrade --install mydemo ./helm --set database.rootPassword=SecurePassword123!,database.databaseName=mydemo
 
 #### Delete helm
 helm uninstall -n default mydemo
 oc delete pvc database-pvc-database-0
+
+#### Add repository
+helm repo add openshift-helm-charts https://charts.openshift.io
+
+#### Search repository
+helm search repo openshift-helm-charts | grep mysql
+
+#### Pull and extract chart
+helm pull openshift-helm-charts/redhat-mysql-persistent --untar --destination ./helm/charts
+```
 
 Curl
 ====
@@ -112,4 +122,42 @@ Curl
 curl -i -X POST -H "Content-Type: application/json" \
   http://localhost:8001/api/login_check \
   -d '{"email":"user@example.com","password":"pa55w0rd"}'
+```
+
+Openshift
+=========
+```bash
+
+
+#### Install opc CLI
+curl -L https://github.com/openshift-pipelines/opc/releases/download/v1.22.0/opc_1.22.0_linux_x86_64.tar.gz | tar -xz
+mv opc .local/bin/
+opc version
+
+#### Install Tekton
+oc login -u kubeadmin -p 
+oc new-project tekton-pipelines
+oc adm policy add-scc-to-user anyuid -z tekton-pipelines-controller
+oc adm policy add-scc-to-user anyuid -z tekton-pipelines-webhook
+
+wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O ~/.local/bin/yq && chmod +x ~/.local/bin/yq && ~/.local/bin/yq --version
+
+curl https://storage.googleapis.com/tekton-releases/pipeline/latest/release.notags.yaml | yq 'del(.spec.template.spec.containers[].securityContext.runAsUser, .spec.template.spec.containers[].securityContext.runAsGroup)' | oc apply -f -
+
+#### Install Tekton CLI
+curl -L https://github.com/tektoncd/cli/releases/download/v0.37.6/tkn_0.37.6_Linux_x86_64.tar.gz | tar -xz
+mv tkn .local/bin/
+tkn version
+
+#### Install kustomize
+curl -L https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.8.1/kustomize_v5.8.1_linux_amd64.tar.gz | tar -xz
+mv kustomize .local/bin/
+kustomize version
+kustomize create --resources deployment.yaml,service.yaml,../base --namespace staging --nameprefix acme-
+kustomize edit add secret my-secret --from-literal=my-literal=12345
+kustomize edit add base frontend.deployment.yaml
+kustomize edit add configmap frontend-nginx-config --from-file=frontend-nginx.conf
+oc adm policy add-scc-to-user anyuid -z default -n test-demo
+kustomize build ./kubernetes/kustomize/base | oc apply -f -
+oc kustomize .
 ```
