@@ -1,6 +1,10 @@
 FROM docker.io/library/php:8.5-fpm-alpine3.23
 
-RUN docker-php-ext-install -j$(nproc) pdo_mysql
+RUN apk add --no-cache icu-dev autoconf g++ make && \
+    docker-php-ext-install -j$(nproc) pdo_mysql intl && \
+    pecl install pcov && \
+    docker-php-ext-enable pcov && \
+    apk del autoconf g++ make
 
 RUN apk add --no-cache bash curl wget && \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer && \
