@@ -9,15 +9,16 @@ resources:
 - route.yaml
 
 secretGenerator:
-- literals:
-  - MYSQL_ROOT_PASSWORD=p@ssw0rd123
-  name: db-secret
+- name: db-secret
   type: Opaque
+  literals:
+    - MYSQL_ROOT_PASSWORD=p@ssw0rd123
 
 configMapGenerator:
-- files:
-  - backend-nginx.conf
-  name: backend-nginx-config
-- files:
-  - frontend-nginx.conf
-  name: frontend-nginx-config
+- name: backend-nginx-config
+  files:
+    - backend-nginx.conf
+
+- name: frontend-nginx-config
+  files:
+    - frontend-nginx.conf
