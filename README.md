@@ -11,7 +11,9 @@ podman compose exec backend composer require --dev doctrine/doctrine-fixtures-bu
 podman compose exec backend symfony console lexik:jwt:generate-keypair --skip-if-exists
 
 #### Run tests
-podman compose exec backend symfony console d:m:m --no-interaction
+podman compose exec backend symfony console --env=test doctrine:database:create -n --if-not-exists
+podman compose exec backend symfony console --env=test doctrine:schema:create --no-interaction
+podman compose exec backend composer phpunit -- --coverage-html=coverage --testdox
 ```
 
 Angular
@@ -127,7 +129,10 @@ curl -i -X POST -H "Content-Type: application/json" \
 Openshift
 =========
 ```bash
-
+#### Install source-to-image CLI
+curl -L https://github.com/openshift/source-to-image/releases/download/v1.6.1/source-to-image-v1.6.1-906fe48a-linux-amd64.tar.tar.gz | tar -xz
+mv s2i .local/bin/
+s2i version
 
 #### Install opc CLI
 curl -L https://github.com/openshift-pipelines/opc/releases/download/v1.22.0/opc_1.22.0_linux_x86_64.tar.gz | tar -xz
@@ -160,4 +165,15 @@ kustomize edit add configmap frontend-nginx-config --from-file=frontend-nginx.co
 oc adm policy add-scc-to-user anyuid -z default -n test-demo
 kustomize build ./kubernetes/kustomize/base | oc apply -f -
 oc kustomize .
+```
+
+Build configs
+===========
+```bash
+oc create -f kubernetes/buildconfig.yaml
+oc start-build demo-build --from-dir .
+
+### Use github webhook
+oc create secret generic github-webhook-secret --from-literal=WebHookSecretKey=$(openssl rand -hex 20)
+oc describe bc demo-build | grep -A1 "Webhook GitHub"
 ```
