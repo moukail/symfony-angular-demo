@@ -16,8 +16,8 @@ class Device {
     #[ORM\Column(type: 'string')]
     private string $macAddress;
 
-    #[ORM\Column(type: 'string')]
-    private string $ipAddress;
+    #[ORM\Column(type: 'string', nullable: true)]
+    private ?string $ipAddress = null;
 
     #[ORM\Column(length: 512, nullable: true)] 
     private ?string $firebaseToken = null;
@@ -57,12 +57,12 @@ class Device {
         return $this;
     }
 
-    public function getIpAddress(): string
+    public function getIpAddress(): ?string
     {
         return $this->ipAddress;
     }
 
-    public function setIpAddress(string $ipAddress): self
+    public function setIpAddress(?string $ipAddress): self
     {
         $this->ipAddress = $ipAddress;
         return $this;

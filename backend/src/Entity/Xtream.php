@@ -43,6 +43,9 @@ class Xtream extends Playlist
             'url' => $this->url,
             'username' => $this->username,
             'password' => $this->password,
+            'macAddress' => $this->device->getMacAddress(),
+            'createdAt' => $this->createdAt->format(\DateTimeInterface::ATOM),
+            'updatedAt' => $this->updatedAt->format(\DateTimeInterface::ATOM),
         ];
     }
 }

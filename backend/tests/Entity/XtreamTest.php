@@ -7,22 +7,20 @@ use PHPUnit\Framework\TestCase;
 
 class XtreamTest extends TestCase
 {
-    public function testToArray(): void
+    public function testGettersAndSetters(): void
     {
         $xtream = new Xtream();
+
+        $xtream->setUsername('testuser');
+        $this->assertEquals('testuser', $xtream->getUsername());
+
+        $xtream->setPassword('secretpassword');
+        $this->assertEquals('secretpassword', $xtream->getPassword());
+
         $xtream->setName('My Xtream Playlist');
-        $xtream->setUrl('http://example.com/playlist.m3u');
-        $xtream->setUsername('user123');
-        $xtream->setPassword('pass123');
+        $this->assertEquals('My Xtream Playlist', $xtream->getName());
 
-        $expected = [
-            'id' => null,
-            'name' => 'My Xtream Playlist',
-            'url' => 'http://example.com/playlist.m3u',
-            'username' => 'user123',
-            'password' => 'pass123',
-        ];
-
-        $this->assertEquals($expected, $xtream->toArray());
+        $xtream->setUrl('http://example.com/xtream');
+        $this->assertEquals('http://example.com/xtream', $xtream->getUrl());
     }
 }

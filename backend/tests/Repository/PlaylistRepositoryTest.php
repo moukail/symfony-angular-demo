@@ -5,23 +5,28 @@ namespace App\Tests\Repository;
 use App\Entity\M3u;
 use App\Entity\Playlist;
 use App\Entity\Xtream;
+use App\Entity\Device;
 use App\Model\M3uDto;
 use App\Model\XtreamDto;
 use App\Repository\PlaylistRepository;
+use App\Repository\DeviceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\ManagerRegistry;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 
 class PlaylistRepositoryTest extends TestCase
 {
     private EntityManagerInterface&MockObject $entityManager;
+    private DeviceRepository&MockObject $deviceRepository;
     private PlaylistRepository $repository;
 
     protected function setUp(): void
     {
         $this->entityManager = $this->createMock(EntityManagerInterface::class);
+        $this->deviceRepository = $this->createMock(DeviceRepository::class);
 
         $classMetadata = new ClassMetadata(Playlist::class);
 
@@ -34,7 +39,54 @@ class PlaylistRepositoryTest extends TestCase
             ->method('getManagerForClass')
             ->willReturn($this->entityManager);
 
-        $this->repository = new PlaylistRepository($registry);
+        $this->repository = new PlaylistRepository($registry, $this->deviceRepository);
+    }
+
+    public function testGetOrCreateDeviceWhenExists(): void
+    {
+        $macAddress = '00:11:22:33:44:55';
+        $existingDevice = (new Device())->setMacAddress($macAddress);
+
+        $this->deviceRepository
+            ->expects($this->once())
+            ->method('findOneBy')
+            ->with(['macAddress' => $macAddress])
+            ->willReturn($existingDevice);
+
+        $this->deviceRepository
+            ->expects($this->never())
+            ->method('save');
+
+        $method = new ReflectionMethod(PlaylistRepository::class, 'getOrCreateDevice');
+        
+        $result = $method->invoke($this->repository, $macAddress);
+
+        $this->assertSame($existingDevice, $result);
+    }
+
+    public function testGetOrCreateDeviceWhenNotExists(): void
+    {
+        $macAddress = 'AA:BB:CC:DD:EE:FF';
+
+        $this->deviceRepository
+            ->expects($this->once())
+            ->method('findOneBy')
+            ->with(['macAddress' => $macAddress])
+            ->willReturn(null);
+
+        $this->deviceRepository
+            ->expects($this->once())
+            ->method('save')
+            ->with($this->callback(function (Device $device) use ($macAddress): bool {
+                return $device->getMacAddress() === $macAddress;
+            }));
+
+        $method = new ReflectionMethod(PlaylistRepository::class, 'getOrCreateDevice');
+        
+        $result = $method->invoke($this->repository, $macAddress);
+
+        $this->assertInstanceOf(Device::class, $result);
+        $this->assertEquals($macAddress, $result->getMacAddress());
     }
 
     public function testSaveM3u(): void
@@ -45,12 +97,19 @@ class PlaylistRepositoryTest extends TestCase
             url: 'http://example.com/playlist.m3u',
         );
 
+        $device = (new Device())->setMacAddress($dto->macAddress);
+        $this->deviceRepository
+            ->method('findOneBy')
+            ->with(['macAddress' => $dto->macAddress])
+            ->willReturn($device);
+
         $this->entityManager
             ->expects($this->once())
             ->method('persist')
-            ->with($this->callback(function (M3u $m3u) use ($dto): bool {
+            ->with($this->callback(function (M3u $m3u) use ($dto, $device): bool {
                 return $m3u->getName() === $dto->name
-                    && $m3u->getUrl() === $dto->url;
+                    && $m3u->getUrl() === $dto->url
+                    && $m3u->getDevice() === $device;
             }));
 
         $this->entityManager
@@ -74,14 +133,21 @@ class PlaylistRepositoryTest extends TestCase
             password: 'pass123',
         );
 
+        $device = (new Device())->setMacAddress($dto->macAddress);
+        $this->deviceRepository
+            ->method('findOneBy')
+            ->with(['macAddress' => $dto->macAddress])
+            ->willReturn($device);
+
         $this->entityManager
             ->expects($this->once())
             ->method('persist')
-            ->with($this->callback(function (Xtream $xtream) use ($dto): bool {
+            ->with($this->callback(function (Xtream $xtream) use ($dto, $device): bool {
                 return $xtream->getName() === $dto->name
-                    && $xtream->getUrl() === $dto->urlPersistsAndReturnsEntity
+                    && $xtream->getUrl() === $dto->url
                     && $xtream->getUsername() === $dto->username
-                    && $xtream->getPassword() === $dto->password;
+                    && $xtream->getPassword() === $dto->password
+                    && $xtream->getDevice() === $device;
             }));
 
         $this->entityManager

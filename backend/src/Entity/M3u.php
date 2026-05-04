@@ -13,6 +13,9 @@ class M3u extends Playlist
             'id' => $this->id,
             'name' => $this->name,
             'url' => $this->url,
+            'macAddress' => $this->device->getMacAddress(),
+            'createdAt' => $this->createdAt->format(\DateTimeInterface::ATOM),
+            'updatedAt' => $this->updatedAt->format(\DateTimeInterface::ATOM),
         ];
     }
 }
