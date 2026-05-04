@@ -33,7 +33,7 @@ class UserRepositoryTest extends TestCase
         $this->repository = new UserRepository($registry);
     }
 
-    public function testSavePersistsAndFlushes(): void
+    public function testSave(): void
     {
         $user = new User();
         $user->setEmail('test@example.com')
@@ -49,10 +49,14 @@ class UserRepositoryTest extends TestCase
             ->expects($this->once())
             ->method('flush');
 
-        $this->repository->save($user);
+        $result = $this->repository->save($user);
+        $this->assertInstanceOf(User::class, $result);
+        $this->assertEquals('test@example.com', $result->getEmail());
+        $this->assertEquals('hashed_password', $result->getPassword());
+        $this->assertEquals('ROLE_USER', $result->getRole());
     }
 
-    public function testRemoveDeletesAndFlushes(): void
+    public function testRemove(): void
     {
         $user = new User();
         $user->setEmail('delete@example.com')

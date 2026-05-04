@@ -22,7 +22,12 @@ class UserTest extends TestCase
         $this->assertEquals('ROLE_USER', $user->getRole());
         $this->assertEquals(['ROLE_USER'], $user->getRoles());
 
+        $user->setRoles(['ROLE_ADMIN']);
+        $this->assertEquals(['ROLE_ADMIN'], $user->getRoles());
+
         $this->assertInstanceOf(\DateTimeImmutable::class, $user->getCreatedAt());
+        
+        $user->setUpdatedAt();
         $this->assertInstanceOf(\DateTimeImmutable::class, $user->getUpdatedAt());
     }
 }
