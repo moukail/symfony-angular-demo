@@ -36,12 +36,14 @@
         "symfony/serializer": "8.0.*",
         "symfony/string": "8.0.*",
         "symfony/translation": "8.0.*",
+        "symfony/uid": "8.0.*",
         "symfony/validator": "8.0.*",
         "symfony/web-link": "8.0.*",
         "symfony/yaml": "8.0.*"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^4.3.1",
+        "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^13.1.7",
         "symfony/browser-kit": "8.0.*",
         "symfony/css-selector": "8.0.*",
@@ -93,7 +95,13 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
-        ]
+        ],
+        "phpstan": "./vendor/bin/phpstan analyse ./src --memory-limit 512M",
+        "phpstan-baseline": "./vendor/bin/phpstan analyse ./src --generate-baseline --memory-limit 512M",
+        "phpspec": "vendor/bin/phpspec run --ansi",
+        "phpspec-ci": "vendor/bin/phpspec run --no-interaction --format=progress",
+        "phpunit": "./vendor/bin/phpunit --colors=always",
+        "phpunit-ci": "./vendor/bin/phpunit --no-interaction --colors=always"
     },
     "conflict": {
         "symfony/symfony": "*"
