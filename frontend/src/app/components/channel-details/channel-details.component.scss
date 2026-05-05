@@ -1,0 +1,130 @@
+.channel-details-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  @media (min-width: 992px) {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+.player-section {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.video-container {
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  aspect-ratio: 16 / 9;
+}
+
+.info-section {
+  flex: 1;
+}
+
+.channel-logo {
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 4px;
+}
+
+.meta-info {
+  margin-top: 16px;
+  line-height: 1.6;
+}
+
+.active-text {
+  color: #4caf50;
+  font-weight: bold;
+}
+
+.inactive-text {
+  color: #f44336;
+  font-weight: bold;
+}
+
+.stream-selector {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 16px;
+  border-radius: 8px;
+  
+  .selector-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    padding: 0 8px;
+
+    h3 {
+      margin: 0;
+      font-weight: 500;
+    }
+  }
+
+  mat-list {
+    background: transparent;
+    padding: 0;
+
+    mat-list-item {
+      border-radius: 8px;
+      margin-bottom: 4px;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      &.mdc-list-item--activated {
+        background: rgba(0, 188, 212, 0.15) !important;
+        
+        [matListItemTitle] {
+          color: #00bcd4;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}
+
+.loading-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+/* Customizing Video.js for a more modern look */
+.video-js {
+  font-family: 'Roboto', sans-serif;
+  
+  .vjs-big-play-button {
+    background-color: rgba(0, 188, 212, 0.7); /* Cyan primary color */
+    border: none;
+    border-radius: 50%;
+    width: 2.5em;
+    height: 2.5em;
+    line-height: 2.5em;
+    margin-left: -1.25em;
+    margin-top: -1.25em;
+    
+    &:hover {
+      background-color: rgba(0, 188, 212, 1);
+    }
+  }
+
+  .vjs-control-bar {
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+  }
+}

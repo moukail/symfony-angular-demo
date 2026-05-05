@@ -1,0 +1,80 @@
+<div class="channel-details-container" *ngIf="channel()">
+  <div class="player-section">
+    <div class="video-container mat-elevation-z8">
+      <video #target class="video-js vjs-big-play-centered"></video>
+    </div>
+    
+    <div class="stream-selector" *ngIf="channel()?.streams && channel()!.streams!.length > 1">
+      <div class="selector-header">
+        <h3 class="mat-h3">Select Stream</h3>
+        <button mat-icon-button color="primary" aria-label="add">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+
+      <mat-list role="list">
+        <mat-list-item role="listitem" *ngFor="let stream of channel()?.streams" [activated]="selectedStream()?.id === stream.id">
+          <span matListItemTitle>Stream {{ stream.id }}</span>
+          <span matListItemLine>{{ stream.type }} | {{ stream.mime_type }}</span>
+          <div matListItemMeta>
+            <button mat-icon-button color="primary" aria-label="play" (click)="selectStream(stream)" matTooltip="Play this stream">
+              <mat-icon>play_circle</mat-icon>
+            </button>
+            <button mat-icon-button aria-label="edit" matTooltip="Edit stream">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" aria-label="delete" matTooltip="Delete stream">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </mat-list-item>
+      </mat-list>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <div mat-card-avatar class="channel-logo" [style.backgroundImage]="'url(' + channel()?.logo + ')'"></div>
+        <mat-card-title>{{ channel()?.name }}</mat-card-title>
+        <mat-card-subtitle>{{ channel()?.country }} | {{ channel()?.language }}</mat-card-subtitle>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div class="meta-info">
+          <p><strong>Type:</strong> {{ channel()?.type }}</p>
+          <p *ngIf="channel()?.website"><strong>Website:</strong> <a [href]="channel()?.website" target="_blank">{{ channel()?.website }}</a></p>
+          <p><strong>Status:</strong> 
+            <span [class.active-text]="channel()?.active" [class.inactive-text]="!channel()?.active">
+              {{ channel()?.active ? 'Online' : 'Offline' }}
+            </span>
+          </p>
+        </div>
+      </mat-card-content>
+      
+      <mat-card-actions align="end">
+        <button mat-button color="primary" routerLink="/channels">
+          <mat-icon>arrow_back</mat-icon> Back to List
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>
+
+<div class="loading-state" *ngIf="isLoading()">
+  <mat-spinner diameter="50"></mat-spinner>
+  <p>Loading channel details...</p>
+</div>
+
+<div class="loading-state" *ngIf="!isLoading() && !channel()">
+  <mat-icon color="warn" style="font-size: 48px; width: 48px; height: 48px;">error</mat-icon>
+  <p>{{ errorMessage() || 'Channel not found or an error occurred.' }}</p>
+  <div class="actions">
+    <button mat-raised-button color="primary" (click)="retry()">
+      <mat-icon>refresh</mat-icon> Retry
+    </button>
+    <button mat-button routerLink="/channels">
+      <mat-icon>arrow_back</mat-icon> Go back to channels
+    </button>
+  </div>
+</div>

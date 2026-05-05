@@ -1,0 +1,54 @@
+<div class="container">
+  <h1 class="mat-h1">Add New Channel</h1>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="channel-form">
+    <mat-form-field appearance="outline">
+      <mat-label>Channel Name</mat-label>
+      <input matInput formControlName="name" placeholder="e.g. CNN">
+      @if (form.get('name')?.hasError('required')) {
+        <mat-error>Name is required</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="row">
+      <mat-form-field appearance="outline" class="flex-1">
+        <mat-label>Type</mat-label>
+        <mat-select formControlName="type">
+          <mat-option value="TV">TV</mat-option>
+          <mat-option value="Radio">Radio</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="flex-1">
+        <mat-label>Country Code</mat-label>
+        <input matInput formControlName="country" placeholder="e.g. US">
+      </mat-form-field>
+    </div>
+
+    <div class="row">
+      <mat-form-field appearance="outline" class="flex-1">
+        <mat-label>Language Code</mat-label>
+        <input matInput formControlName="language" placeholder="e.g. en">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="flex-1">
+        <mat-label>Website</mat-label>
+        <input matInput formControlName="website" placeholder="https://...">
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Logo URL</mat-label>
+      <input matInput formControlName="logo" placeholder="https://...">
+    </mat-form-field>
+
+    <div class="checkbox-container">
+      <mat-checkbox formControlName="active">Active</mat-checkbox>
+    </div>
+
+    <div class="actions">
+      <button mat-button type="button" routerLink="/channels">Cancel</button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Create Channel</button>
+    </div>
+  </form>
+</div>
