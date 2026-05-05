@@ -22,5 +22,8 @@ class ChannelDto
         public string $logo,
         #[Assert\NotBlank]
         public bool $active,
-    ) {}
+    ) {
+        $this->country = strtoupper($this->country);
+        $this->language = strtolower($this->language);
+    }
 }

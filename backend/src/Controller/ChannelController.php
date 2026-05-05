@@ -21,11 +21,15 @@ class ChannelController extends AbstractController
     #[Route('/api/v1/channels', name: 'app_channels', methods: ['GET'])]
     public function index(): JsonResponse
     {
-        $result = $this->channelRepository->findBy(/*['active' => true], */['name' => 'ASC']);
+        $result = $this->channelRepository->findAll();
 
-        return $this->json($result, Response::HTTP_OK, [], [
-            'groups' => ['user'],
-        ]);
+        return $this->json($result, Response::HTTP_OK, [], ['groups' => 'channel:read']);
+    }
+
+    #[Route('/api/v1/channels/{id}', name: 'app_channel_show', methods: ['GET'])]
+    public function show(Channel $channel): JsonResponse
+    {
+        return $this->json($channel, Response::HTTP_OK, [], ['groups' => 'channel:read']);
     }
 
     #[Route('/api/v1/channels', name: 'app_channels_add', methods: ['POST'])]
@@ -43,7 +47,7 @@ class ChannelController extends AbstractController
             ->setActive($model->active)
         );
 
-        return $this->json($result, Response::HTTP_CREATED, [], ['groups' => ['user']]);
+        return $this->json($result, Response::HTTP_CREATED, [], ['groups' => 'channel:read']);
     }
 
     #[Route('/api/v1/channels/{id}', name: 'app_channels_update', methods: ['PUT'])]

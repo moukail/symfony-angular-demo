@@ -17,41 +17,42 @@ class Channel
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    #[Groups(groups: ["user"])]
+    #[Groups(["channel:read"])]
     private ?Uuid $id = null;
 
-    #[Groups(groups: ["user"])]
+    #[Groups(["channel:read"])]
     #[ORM\Column(type: 'string', length: 255)]
     private string $name;
 
-    #[Groups(groups: ["user"])]
+    #[Groups(["channel:read"])]
     #[ORM\Column(type: 'string', length: 255, enumType: ChannelType::class)]
     private ChannelType $type;
     
-    #[Groups(groups: ["user"])]
+    #[Groups(["channel:read"])]
     #[ORM\Column(type: 'string', length: 50)]
     private string $country;
     
-    #[Groups(groups: ["user"])]
+    #[Groups(["channel:read"])]
     #[ORM\Column(type: 'string', length: 50)]
     private string $language;
 
-    #[Groups(groups: ["user"])]
+    #[Groups(["channel:read"])]
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private string $website;
 
-    #[Groups(groups: ["user"])]
+    #[Groups(["channel:read"])]
     #[ORM\Column(type: 'text', nullable: true)]
     private string $logo;
 
-    #[Groups(groups: ["user"])]
+    #[Groups(["channel:read"])]
     #[ORM\Column(type: 'boolean')]
     private bool $active = true;
     
-    #[Groups(groups: ["user"])]
+    #[Groups(["channel:read"])]
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private readonly string $identifier;
 
+    #[Groups(["channel:read"])]
     #[ORM\OneToMany(targetEntity: Stream::class, mappedBy: 'channel', cascade: ["persist", "remove"])]
     private Collection $streams;
 
