@@ -16,7 +16,6 @@ use App\Model\UserDto;
 use App\Entity\User;
 
 #[Route('/api/v1/users')]
-
 class UserController extends AbstractController
 {
     public function __construct(

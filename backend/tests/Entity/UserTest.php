@@ -4,12 +4,18 @@ namespace App\Tests\Entity;
 
 use App\Entity\User;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 class UserTest extends TestCase
 {
     public function testGettersAndSetters(): void
     {
         $user = new User();
+
+        $reflection = new ReflectionClass(User::class);
+        $property = $reflection->getProperty('id');
+        $property->setValue($user, 123);
+        $this->assertEquals(123, $user->getId());
 
         $user->setEmail('test@example.com');
         $this->assertEquals('test@example.com', $user->getEmail());
