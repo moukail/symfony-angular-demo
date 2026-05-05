@@ -16,33 +16,33 @@ class Stream
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    #[Groups(["user", "manager"])]
+    #[Groups(["user", "manager", "channel:read"])]
     private ?Uuid $id = null;
 
     #[ORM\ManyToOne(targetEntity: Channel::class, inversedBy: "streams")]
     private Channel $channel;
 
-    #[Groups(groups: ["user"])]
+    #[Groups(["user", "channel:read"])]
     #[ORM\Column(type: 'string', length: 255)] 
     private string $mime_type;
     
-    #[Groups(groups: ["user"])]
+    #[Groups(["user", "channel:read"])]
     #[ORM\Column(type: 'string', length: 50)]
     private string  $source;
     
-    #[Groups(groups: ["user"])]
+    #[Groups(["user", "channel:read"])]
     #[ORM\Column(type: 'string', length: 50, enumType: StreamType::class)]
     private StreamType $type;
 
-    #[Groups(groups: ["user"])]
+    #[Groups(["user", "channel:read"])]
     #[ORM\Column(type: 'text')]
     private string $url;
 
-    #[Groups(groups: ["user"])]
+    #[Groups(["user", "channel:read"])]
     #[ORM\Column(type: 'boolean')]
     private bool $drm = false;
 
-    #[Groups(groups: ["user"])]
+    #[Groups(["user", "channel:read"])]
     #[ORM\Column(type: 'text', nullable: true)]
     private string $drm_license;
 

@@ -13,10 +13,11 @@ class StreamRepository extends ServiceEntityRepository
         parent::__construct($registry, Stream::class);
     }
 
-    public function save(Stream $stream): void
+    public function save(Stream $stream): Stream
     {
         $this->getEntityManager()->persist($stream);
         $this->getEntityManager()->flush();
+        return $stream;
     }
 
     public function remove(Stream $entity): void
