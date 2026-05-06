@@ -42,9 +42,9 @@ class StreamController extends AbstractController
         return $this->json($result, Response::HTTP_CREATED, [], ['groups' => ['user']]);
     }
 
-    #[Route('/api/v1/channels/{channel}/streams/{id}', name: 'app_stream_delete', methods: ['DELETE'])]
+    #[Route('/api/v1/streams/{id}', name: 'app_stream_delete', methods: ['DELETE'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function delete(Channel $channel, Stream $stream): JsonResponse
+    public function delete(Stream $stream): JsonResponse
     {
         $this->streamRepository->remove($stream);
         return $this->json($stream, Response::HTTP_OK, [], ['groups' => ['user']]);
