@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ChannelComponent } from './channel.component';
+import { ChannelListComponent } from './channel-list.component';
 import { ChannelStore } from '../../stores/channel.store';
 import { signal } from '@angular/core';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -7,9 +7,9 @@ import { provideRouter } from '@angular/router';
 import { Channel } from '../../models/channel.model';
 import { vi, describe, beforeEach, it, expect } from 'vitest';
 
-describe('ChannelComponent', () => {
-    let component: ChannelComponent;
-    let fixture: ComponentFixture<ChannelComponent>;
+describe('ChannelListComponent', () => {
+    let component: ChannelListComponent;
+    let fixture: ComponentFixture<ChannelListComponent>;
     let mockStore: any;
 
     const mockChannels: Channel[] = [
@@ -34,7 +34,7 @@ describe('ChannelComponent', () => {
 
         await TestBed.configureTestingModule({
             imports: [
-                ChannelComponent,
+                ChannelListComponent,
                 NoopAnimationsModule
             ],
             providers: [
@@ -43,7 +43,7 @@ describe('ChannelComponent', () => {
             ]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(ChannelComponent);
+        fixture = TestBed.createComponent(ChannelListComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

@@ -15,6 +15,10 @@ import Player from 'video.js/dist/types/player';
 import { MatListModule } from '@angular/material/list';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { StreamDialogComponent } from '../stream-dialog/stream-dialog.component';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { StreamStore } from '../../stores/stream.store';
 
 @Component({
     selector: 'app-channel-details',
@@ -29,7 +33,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
         MatButtonToggleModule,
         MatListModule,
         MatProgressSpinnerModule,
-        MatTooltipModule
+        MatTooltipModule,
+        MatDialogModule
     ],
     templateUrl: './channel-details.component.html',
     styleUrl: './channel-details.component.scss',
@@ -38,6 +43,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 export class ChannelDetailsComponent implements OnInit, OnDestroy {
     private route = inject(ActivatedRoute);
     private channelService = inject(ChannelService);
+    private dialog = inject(MatDialog);
+
+    readonly streamStore = inject(StreamStore);
 
     // State using Signals
     channel = signal<Channel | null>(null);
@@ -129,6 +137,73 @@ export class ChannelDetailsComponent implements OnInit, OnDestroy {
             });
             this.player.play();
         }
+    }
+
+    addStream(): void {
+        const dialogRef = this.dialog.open(StreamDialogComponent, {
+            width: '500px',
+            data: { channelId: this.channel()?.id }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                const currentChannel = this.channel();
+                if (currentChannel) {
+                    const updatedStreams = [...(currentChannel.streams || []), { ...result, id: 'temp-' + Date.now() }];
+                    this.channel.set({ ...currentChannel, streams: updatedStreams });
+                    if (!this.selectedStream()) {
+                        this.selectedStream.set(updatedStreams[0]);
+                    }
+                }
+            }
+        });
+    }
+
+    editStream(stream: Stream): void {
+        const dialogRef = this.dialog.open(StreamDialogComponent, {
+            width: '500px',
+            data: { stream, channelId: this.channel()?.id }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                const currentChannel = this.channel();
+                if (currentChannel && currentChannel.streams) {
+                    const updatedStreams = currentChannel.streams.map(s => s.id === stream.id ? { ...s, ...result } : s);
+                    this.channel.set({ ...currentChannel, streams: updatedStreams });
+
+                    if (this.selectedStream()?.id === stream.id) {
+                        this.selectStream({ ...stream, ...result });
+                    }
+                }
+            }
+        });
+    }
+
+    deleteStream(stream: Stream): void {
+        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+            width: '400px',
+            data: {
+                title: 'Delete Stream',
+                message: `Are you sure you want to delete this stream (Stream ${stream.id})?`,
+                confirmText: 'Delete',
+                confirmColor: 'warn'
+            }
+        });
+
+        dialogRef.afterClosed().subscribe(confirmed => {
+            if (confirmed) {
+                const currentChannel = this.channel();
+                if (currentChannel && currentChannel.streams) {
+                    const updatedStreams = currentChannel.streams.filter(s => s.id !== stream.id);
+                    this.channel.set({ ...currentChannel, streams: updatedStreams });
+                    if (this.selectedStream()?.id === stream.id) {
+                        this.selectedStream.set(updatedStreams.length > 0 ? updatedStreams[0] : null);
+                    }
+                    this.streamStore.delete(stream.id);
+                }
+            }
+        });
     }
 
     ngOnDestroy(): void {

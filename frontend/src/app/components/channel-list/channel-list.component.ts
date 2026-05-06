@@ -12,9 +12,9 @@ import { ChannelStore } from '../../stores/channel.store';
 import { ChannelDeleteComponent } from '../channel-delete/channel-delete';
 
 @Component({
-  selector: 'app-channel',
-  templateUrl: './channel.component.html',
-  styleUrl: './channel.component.scss',
+  selector: 'app-channel-list',
+  templateUrl: './channel-list.component.html',
+  styleUrl: './channel-list.component.scss',
   imports: [
     MatTableModule,
     MatPaginatorModule,
@@ -27,7 +27,7 @@ import { ChannelDeleteComponent } from '../channel-delete/channel-delete';
     ChannelDeleteComponent
   ],
 })
-export class ChannelComponent implements OnInit, AfterViewInit {
+export class ChannelListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   displayedColumns = ['name', 'type', 'country', 'language', 'active', 'id'];
