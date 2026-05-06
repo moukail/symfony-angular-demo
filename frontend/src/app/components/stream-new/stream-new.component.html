@@ -1,0 +1,52 @@
+<div class="container">
+  <h1 class="mat-h1">Add New Stream</h1>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="stream-form">
+    <div class="row">
+      <mat-form-field appearance="outline" class="flex-1">
+        <mat-label>Mime Type</mat-label>
+        <input matInput formControlName="mime_type" placeholder="e.g. application/x-mpegURL">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="flex-1">
+        <mat-label>Source</mat-label>
+        <input matInput formControlName="source" placeholder="e.g. Akamai">
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Type</mat-label>
+      <mat-select formControlName="type">
+        <mat-option value="hls">HLS</mat-option>
+        <mat-option value="dash">DASH</mat-option>
+        <mat-option value="smooth_streaming">Smooth Streaming</mat-option>
+        <mat-option value="mp4">MP4</mat-option>
+        <mat-option value="m3u">M3U</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Stream URL</mat-label>
+      <input matInput formControlName="url" placeholder="https://...">
+      @if (form.get('url')?.hasError('pattern')) {
+        <mat-error>Must be a valid HTTP/HTTPS URL</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="checkbox-container">
+      <mat-checkbox formControlName="drm">DRM Protected</mat-checkbox>
+    </div>
+
+    @if (form.get('drm')?.value) {
+      <mat-form-field appearance="outline">
+        <mat-label>DRM License URL</mat-label>
+        <input matInput formControlName="drm_license" placeholder="https://...">
+      </mat-form-field>
+    }
+
+    <div class="actions">
+      <button mat-button type="button" [routerLink]="['/channels', channelId, 'streams']">Cancel</button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Add Stream</button>
+    </div>
+  </form>
+</div>

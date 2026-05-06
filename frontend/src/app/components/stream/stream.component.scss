@@ -1,0 +1,26 @@
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 0 16px;
+}
+
+.header-title {
+  margin: 0;
+}
+
+.full-width-table {
+  width: 100%;
+}
+
+.url-cell {
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mat-mdc-row:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
