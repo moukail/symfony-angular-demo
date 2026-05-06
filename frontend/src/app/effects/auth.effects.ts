@@ -59,19 +59,29 @@ export class AuthEffects {
   refreshToken$ = createEffect(() =>
     this.actions$.pipe(
       ofType(refreshTokenTrigger),
-      switchMap(() =>
-        this.http.post<any>(this.base + '/token/refresh', {
-          refresh_token: localStorage.getItem('refresh_token')
+      switchMap(() => {
+        const rt = localStorage.getItem('refresh_token');
+        console.log('Attempting token refresh with:', rt ? rt.substring(0, 10) + '...' : 'null');
+        
+        return this.http.post<any>(this.base + '/token/refresh', {
+          refresh_token: rt
         }).pipe(
-          map(res =>
-            refreshTokenSuccess({
+          map(res => {
+            console.log('Refresh token response:', res);
+            if (!res.token || !res.refresh_token) {
+              throw new Error('Invalid refresh response');
+            }
+            return refreshTokenSuccess({
               accessToken: res.token,
               refreshToken: res.refresh_token
-            })
-          ),
-          catchError(() => of(logout()))
-        )
-      )
+            });
+          }),
+          catchError(err => {
+            console.error('Refresh token failed:', err);
+            return of(logout());
+          })
+        );
+      })
     )
   );
 }

@@ -45,13 +45,15 @@ export const authReducer = createReducer(
   })),
 
   on(refreshTokenSuccess, (state, { accessToken, refreshToken }) => {
-    localStorage.setItem('access_token', accessToken);
-    localStorage.setItem('refresh_token', refreshToken);
+    if (accessToken && refreshToken) {
+      localStorage.setItem('access_token', accessToken);
+      localStorage.setItem('refresh_token', refreshToken);
+    }
 
     return {
       ...state,
-      accessToken,
-      refreshToken
+      accessToken: accessToken || state.accessToken,
+      refreshToken: refreshToken || state.refreshToken
     };
   }),
 
