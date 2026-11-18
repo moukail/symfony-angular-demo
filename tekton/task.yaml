@@ -1,0 +1,19 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: demo-task
+spec:
+  displayName: Demo Task
+  results:
+    - name: message
+      type: string
+  params:
+    - name: message
+      type: string
+      default: "Hello from step 1"
+  steps:
+    - name: step-1
+      image: docker.io/library/ubuntu:22.04
+      script: |
+        #!/bin/bash
+        echo "$(params.message)"

@@ -1,0 +1,42 @@
+<div class="tv-player-container">
+  <div class="player-header">
+    <div class="channel-info">
+      <span class="live-badge">LIVE</span>
+      <h1 class="channel-title">{{ channelName || 'Direct Stream' }}</h1>
+    </div>
+    <button class="back-button" (click)="goBack()">
+      <span class="material-icons">arrow_back</span>
+      Back to List
+    </button>
+  </div>
+
+  <div class="main-player-layout">
+    <aside class="channel-sidebar" [class.hidden]="!showSidebar" *ngIf="channelStore.entities().length > 0">
+      <mat-nav-list>
+        <mat-list-item 
+          *ngFor="let channel of channelStore.entities()" 
+          class="channel-card" 
+          [class.active]="channel.name === channelName"
+          (click)="playChannel(channel)"
+        >
+          <div class="logo-wrapper" matListItemIcon>
+            <img [src]="channel.logo || 'assets/placeholder-tv.png'" [alt]="channel.name">
+          </div>
+          <span matListItemTitle class="card-title">{{ channel.name }}</span>
+        </mat-list-item>
+      </mat-nav-list>
+    </aside>
+
+    <div class="player-content">
+      <div class="video-wrapper">
+        <video #target class="video-js vjs-big-play-centered vjs-theme-city"></video>
+      </div>
+      
+      <div class="player-info-footer">
+        <p class="stream-url" *ngIf="streamUrl">
+          <span class="label">Source:</span> {{ streamUrl }}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

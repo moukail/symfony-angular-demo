@@ -13,6 +13,7 @@
       @if ((role$ | async) === 'ROLE_ADMIN') {
         <button routerLink="/dashboard" mat-button>Dashboard</button>
         <button routerLink="/users" mat-button>Users</button>
+        <button routerLink="/channels" mat-button>Channels</button>
       }
       <button (click)="logout()" mat-button>Logout</button>
     }

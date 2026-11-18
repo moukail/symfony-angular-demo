@@ -1,0 +1,29 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: demo-build
+spec:
+  strategy:
+    type: docker
+    dockerStrategy:
+      dockerfilePath: ./Containerfile
+  source:
+    type: git
+    contextDir: ./backend
+    git:
+      uri: https://github.com/moukail/symfony-angular-demo.git
+      ref: main
+    #sourceSecret:
+    #  name: github-token
+  output:
+    pushSecret:
+      name: dockerhub-token
+    to:
+      kind: DockerImage
+      name: docker.io/moukail/symfony-angular-demo-backend:latest
+  triggers:
+    - type: ConfigChange
+    - type: GitHub
+      github:
+        secretReference:
+          name: github-token

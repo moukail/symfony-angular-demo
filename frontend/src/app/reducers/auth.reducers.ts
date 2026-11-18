@@ -59,6 +59,12 @@ export const authReducer = createReducer(
 
   on(logout, () => {
     localStorage.clear();
-    return initialAuthState;
+    return {
+      user: null,
+      accessToken: null,
+      refreshToken: null,
+      loading: false,
+      error: null
+    };
   })
 );

@@ -22,11 +22,13 @@ Angular
 #### Create project
 podman run --rm -w /app -v .:/app:z docker.io/library/node:25.9-alpine3.23 npm init @angular@latest frontend -- --skip-git
 #### Install dependencies
-podman run --rm -w /app -v ./frontend:/app docker.io/library/node:25.9-alpine3.23 npm install @angular/material @ngrx/store @ngrx/effects @ngrx/entity @ngrx/operators
+podman run --rm -w /app -v ./frontend:/app docker.io/library/node:25.9-alpine3.23 npm install @angular/material @ngrx/store @ngrx/effects @ngrx/entity @ngrx/operators @ngrx/schematics
 podman compose exec frontend npm install --save-dev @wdio/cli @wdio/local-runner @wdio/mocha-framework @wdio/spec-reporter wdio-chromedriver-service ts-node typescript @types/mocha
 
 #### Generate dashboard
 podman compose exec frontend npm run ng generate @angular/material:dashboard dashboard
+podman compose exec frontend npm run ng generate @ngrx/schematics:entity Channel
+
 #### Run tests
 podman compose exec frontend npm run test
 #### Run e2e tests
@@ -84,6 +86,16 @@ oc delete statefulset database
 oc delete svc database backend frontend
 oc delete route backend frontend
 oc delete job database-migrations
+
+#### Find resources
+$ oc get clusterrole -o json | jq -r '
+  .items[]
+  | select(any(.rules[]?;
+      any(.resources[]?; . == "projectrequests")
+      and any(.verbs[]?; . == "create")
+  ))
+' 
+oc get clusterrole -o json | jq -r '.items[] | select(any(.rules[]?; any(.resources[]?; . == "projectrequests") and any(.verbs[]?; . == "create"))) | .metadata.name'
 ```
 
 Helm
@@ -126,19 +138,9 @@ curl -i -X POST -H "Content-Type: application/json" \
   -d '{"email":"user@example.com","password":"pa55w0rd"}'
 ```
 
-Openshift
+Tekton
 =========
 ```bash
-#### Install source-to-image CLI
-curl -L https://github.com/openshift/source-to-image/releases/download/v1.6.1/source-to-image-v1.6.1-906fe48a-linux-amd64.tar.tar.gz | tar -xz
-mv s2i .local/bin/
-s2i version
-
-#### Install opc CLI
-curl -L https://github.com/openshift-pipelines/opc/releases/download/v1.22.0/opc_1.22.0_linux_x86_64.tar.gz | tar -xz
-mv opc .local/bin/
-opc version
-
 #### Install Tekton
 oc login -u kubeadmin -p 
 oc new-project tekton-pipelines
@@ -153,6 +155,20 @@ curl https://storage.googleapis.com/tekton-releases/pipeline/latest/release.nota
 curl -L https://github.com/tektoncd/cli/releases/download/v0.37.6/tkn_0.37.6_Linux_x86_64.tar.gz | tar -xz
 mv tkn .local/bin/
 tkn version
+```
+
+Openshift
+=========
+```bash
+#### Install source-to-image CLI
+curl -L https://github.com/openshift/source-to-image/releases/download/v1.6.1/source-to-image-v1.6.1-906fe48a-linux-amd64.tar.tar.gz | tar -xz
+mv s2i .local/bin/
+s2i version
+
+#### Install opc CLI
+curl -L https://github.com/openshift-pipelines/opc/releases/download/v1.22.0/opc_1.22.0_linux_x86_64.tar.gz | tar -xz
+mv opc .local/bin/
+opc version
 
 #### Install kustomize
 curl -L https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.8.1/kustomize_v5.8.1_linux_amd64.tar.gz | tar -xz
@@ -176,4 +192,11 @@ oc start-build demo-build --from-dir .
 ### Use github webhook
 oc create secret generic github-webhook-secret --from-literal=WebHookSecretKey=$(openssl rand -hex 20)
 oc describe bc demo-build | grep -A1 "Webhook GitHub"
+```
+
+Shipwright
+========
+```bash
+shp version
+shp build list
 ```

@@ -19,6 +19,7 @@ security:
         refresh:
             pattern:  ^/api/token/refresh
             stateless: true
+            refresh_jwt: ~
 
         login:
             pattern: ^/api/login
@@ -28,11 +29,6 @@ security:
                 username_path: email
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
-
-        playlist:
-            pattern: ^/api/v1/playlists
-            stateless: true
-            security: false
 
         api:
             pattern: ^/api
@@ -53,6 +49,9 @@ security:
 
     # Note: Only the *first* matching rule is applied
     access_control:
+        - { path: ^/api/login, roles: PUBLIC_ACCESS }
+        - { path: ^/api/token/refresh, roles: PUBLIC_ACCESS }
+        - { path: ^/api/logout, roles: PUBLIC_ACCESS }
         - { path: ^/api, roles: PUBLIC_ACCESS }
         
         # - { path: ^/admin, roles: ROLE_ADMIN }

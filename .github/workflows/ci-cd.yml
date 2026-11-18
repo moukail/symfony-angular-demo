@@ -48,6 +48,12 @@ jobs:
     - name: Install Dependencies
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
+    #- name: Static Analysis
+    #  run: composer phpstan
+
+    - name: PHPUnit Tests
+      run: composer phpunit --no-interaction --no-progress
+
     - name: Remove Dev Dependencies
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --no-dev --optimize-autoloader
 

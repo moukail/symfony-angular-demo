@@ -67,8 +67,9 @@ export class AuthEffects {
           refresh_token: rt
         }).pipe(
           map(res => {
-            console.log('Refresh token response:', res);
+            console.log('Refresh token response SUCCESS:', res);
             if (!res.token || !res.refresh_token) {
+              console.error('Invalid refresh response structure:', res);
               throw new Error('Invalid refresh response');
             }
             return refreshTokenSuccess({
@@ -77,7 +78,7 @@ export class AuthEffects {
             });
           }),
           catchError(err => {
-            console.error('Refresh token failed:', err);
+            console.error('Refresh token response ERROR:', err);
             return of(logout());
           })
         );
